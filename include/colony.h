@@ -10,8 +10,10 @@
 
 typedef struct colony *Colony;
 
-Colony newColony(int initCount);
-void upDateColony(int time);
-int getRabbitCount(Colony);
+Colony newColony(int initCount, int atTime);
+Colony newColonyWithRabbits(int initCount);
+void upDateColony(Colony c, int time);
+int getRabbitCount(Colony c);
+void breedRabbits(Colony c, int time);
 
 #endif /* COLONY_H_ */

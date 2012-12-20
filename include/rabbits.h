@@ -11,7 +11,7 @@
 typedef struct rabbitList *RabbitList;
 
 typedef struct {
-	int id, birthTime, colony;
+	int id, birthTime, adultTime, deathTime, colony;
 } Rabbit;
 
 int initRabbits();
@@ -22,8 +22,16 @@ int getRabbitTime(Rabbit *r, int time);
 
 RabbitList getRabbitsByColony(int colID);
 
+void printfRabbitsByColony(int colID);
+
 Rabbit *nextRabbit(RabbitList rl, Rabbit *r);
 
 void freeRabbitList(RabbitList rl);
+
+int getRabbitAvgAge();
+
+int removeRabbitByID(int ID);
+
+void removeOldRabbits(int colID, int time);
 
 #endif /* RABBIT_H_ */
