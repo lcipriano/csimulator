@@ -69,19 +69,26 @@ int initRabbits() {
 Rabbit *newRabbit(int birthTime, int colony) {
 
 	Rabbit r;
+	int at, dt;
 
 	r.id = nextRabbitID;
 	r.birthTime = birthTime;
 	r.colony = colony;
-	r.adultTime = birthTime + R_ADULT_AGE;
-	r.deathTime = birthTime + nextUDistriRandom(rabbitDeathDistri);
 
-	Rabbit *pr = addLinkedListLast(rabbits, &r);
+	dt = birthTime + nextUDistriRandom(rabbitDeathDistri);
+	at = birthTime + R_ADULT_AGE;
+	if (dt < at)
+		at = dt;
 
-	if (pr != NULL )
+	r.adultTime = at;
+	r.deathTime = dt;
+
+	Rabbit *pr;
+	if ((pr = addLinkedListTail(rabbits, &r)) != NULL )
 		nextRabbitID++;
 
 	return pr;
+
 }
 
 int getRabbitTime(Rabbit *r, int time) {
@@ -171,13 +178,13 @@ void removeOldRabbits(int colID, int time) {
 	while (LinkedListIteratorNext(r, &nr) != NULL ) {
 		if (time >= nr.deathTime) {
 			index = getLinkedListIteratorPos(r) - 1;
-			addLinkedListLast(indexs, &index);
+			addLinkedListTail(indexs, &index);
 		}
 	}
 
 	freeLinkedListIterator(r);
 	count = 0;
-	while (removeLinkedListFirst(indexs, &index) != NULL ) {
+	while (removeLinkedListHead(indexs, &index) != NULL ) {
 		removeLinkedList(rabbits, &nr, index - count);
 		count++;
 	}

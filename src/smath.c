@@ -8,8 +8,16 @@
 #include <stdlib.h>
 #include <math.h>
 
-#include <smath.h>
+#include "smath.h"
 
+/**
+ *
+ * @param x1
+ * @param y1
+ * @param x2
+ * @param y2
+ * @return A new flinear object
+ */
 flinear newflinear(float x1, float y1, float x2, float y2) {
 
 	flinear fl;

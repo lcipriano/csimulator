@@ -11,26 +11,26 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <rabbits.h>
-#include <smath.h>
-#include <colony.h>
+#include "rabbits.h"
+#include "smath.h"
+#include "colony.h"
 
 int main(void) {
 
 	int i;
-	int n = 5;
+	int n = 12;
 	Rabbit *pr;
 
 	initRabbits();
 
-	Colony c = newColony(10, 0);
+	Colony c = newColony(100, 0);
 
 	printfRabbitsByColony(1);
 
 	for (i = 1; i <= n; ++i) {
 		breedRabbits(c, i);
-		printf("time : %d", i);
-		printfRabbitsByColony(1);
+		printf("time : %d\n", i);
+		/*printfRabbitsByColony(1);*/
 	}
 
 	exit(0);
