@@ -18,19 +18,15 @@
 int main(void) {
 
 	int i;
-	int n = 12;
-	Rabbit *pr;
+	int n = 3;
 
 	initRabbits();
 
-	Colony c = newColony(100, 0);
-
-	printfRabbitsByColony(1);
+	Colony c = newColony(1, 10, 0);
 
 	for (i = 1; i <= n; ++i) {
-		breedRabbits(c, i);
 		printf("time : %d\n", i);
-		/*printfRabbitsByColony(1);*/
+		updateColony(c, i);
 	}
 
 	exit(0);

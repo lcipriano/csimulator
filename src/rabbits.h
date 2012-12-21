@@ -1,39 +1,41 @@
 /*
- * rabbit.h
+ * rabbits2.h
  *
- *  Created on: Dec 18, 2012
+ *  Created on: Dec 20, 2012
  *      Author: lcipriano
  */
 
-#ifndef RABBIT_H_
-#define RABBIT_H_
+#ifndef RABBITS2_H_
+#define RABBITS2_H_
 
 typedef struct rabbitList *RabbitList;
 
 typedef struct {
-	int id, birthTime, adultTime, deathTime, colony;
+	int id, birthTime, adultTime, deathTime;
 } Rabbit;
 
-int initRabbits();
+void initRabbits();
 
-Rabbit *newRabbit(int birthDate, int colony);
+Rabbit newRabbit(int birthTime);
 
-int getRabbitTime(Rabbit *r, int time);
+Rabbit *insertRabbit(RabbitList rl, Rabbit r);
 
-RabbitList getRabbitsByColony(int colID);
-
-void printfRabbitsByColony(int colID);
-
-Rabbit *nextRabbit(RabbitList rl, Rabbit *r);
+RabbitList newRabbitList();
 
 void freeRabbitList(RabbitList rl);
 
-int getRabbitAvgAge();
+void insertBornRabbits(RabbitList rl, int count, int birthTime);
 
-int removeRabbitByID(int ID);
+int getAdultsCount(RabbitList rl, int time);
 
-void removeOldRabbits(int colID, int time);
+void deleteOldRabbits(RabbitList rl, int timeLimit);
 
-int getNextRabbit();
+void printfRabbit(Rabbit r);
 
-#endif /* RABBIT_H_ */
+void printfRabbitList(RabbitList rl);
+
+int getDeathTime();
+
+int getAdultCount(RabbitList rl, int time);
+
+#endif /* RABBITS2_H_ */

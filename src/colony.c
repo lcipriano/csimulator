@@ -17,45 +17,49 @@ struct colony {
 	int id;
 	int rabbitCount;
 	int rabbitID;
+	RabbitList rl;
 };
 
-Colony newColony(int initCount, int atTime) {
+/**
+ * Cria uma nova Colónia
+ *
+ * @param initCount Número inicial de coelhos
+ * @param atTime	Tempo em que a Colónia é criada
+ * @return			ponteiro para uma nova Colónia
+ */
+Colony newColony(int id, int initCount, int atTime) {
 
 	Colony nc = malloc(sizeof(struct colony));
 
 	if (nc == NULL )
 		return NULL ;
 
-	nc->id = 1;
+	nc->rl = newRabbitList();
+	if (nc->rl == NULL ) {
+		free(nc);
+		return NULL ;
+	}
+
+	nc->id = id;
 
 	int i;
-	UDistri d = newUDistri(0, 2 * getRabbitAvgAge());
+	Rabbit r;
 	for (i = 1; i <= initCount; ++i) {
-		newRabbit(atTime - nextUDistriRandom(d), 1);
+		r = newRabbit(atTime - getDeathTime());
+		insertRabbit(nc->rl, r);
 	}
+
+	printfRabbitList(nc->rl);
 
 	return nc;
 }
 
-void breedRabbits(Colony c, int time) {
+void updateColony(Colony c, int time) {
 
-	int adultRabbits = 0, i;
-	RabbitList rl;
-	Rabbit nr;
+	insertBornRabbits(c->rl, getAdultsCount(c->rl, time) * 5 / 2, time);
 
-	/* count number of adults in rabbits */
-	rl = getRabbitsByColony(c->id);
-	while (nextRabbit(rl, &nr) != NULL ) {
-		if (time >= nr.adultTime)
-			adultRabbits++;
-	}
+	deleteOldRabbits(c->rl, time);
 
-	/* create new rabbits */
-	adultRabbits = adultRabbits * (5 / 2);
-	for (i = 1; i <= adultRabbits; ++i)
-		newRabbit(time, c->id);
-
-	/* remove old rabbits */
-	removeOldRabbits(c->id, time);
+	printfRabbitList(c->rl);
 
 }
