@@ -22,12 +22,14 @@ int main(void) {
 
 	initRabbits();
 
-	Colony c = newColony(1, 10, 0);
+	Colony c = newColony(16, 0);
 
 	for (i = 1; i <= n; ++i) {
 		printf("time : %d\n", i);
 		updateColony(c, i);
 	}
+
+	freeColony(c);
 
 	exit(0);
 }

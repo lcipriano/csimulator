@@ -8,10 +8,16 @@
 #ifndef COLONY_H_
 #define COLONY_H_
 
+#include "rabbits.h"
+
 typedef struct colony *Colony;
 
-Colony newColony(int id, int initCount, int atTime);
-Colony newColonyWithRabbits();
+void initColony();
+Colony newColony(int initCount, int atTime);
+void freeColony(Colony c);
+Colony newColonyWithRabbits(RList rl);
 void updateColony(Colony c, int time);
+
+int huntRabbit(Colony rl);
 
 #endif /* COLONY_H_ */

@@ -5,24 +5,33 @@
  *      Author: lcipriano
  */
 
-#include <LinkedList.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
-#include <time.h>
+#include <math.h>
 
 #include "rabbits.h"
 #include "smath.h"
+#include "lists.h"
 
 #define R_ADULT_AGE 3
 #define R_AVG_AGE 24
 
-struct rabbitList {
-	LinkedList list;
+struct rList {
+	List list;
 };
 
 static int nextRabbitID;
 static UDistri rabbitDeathDistri;
+
+static int isRabbitBreedSeason(int time) {
+	printf("1- %d ", time);
+	time = gmod(time, 12);
+	/* consider between FEV and SET */
+	printf("2- %d\n", time);
+	return 1 <= time && time <= 8 ? 1 : 0;
+
+}
 
 static int getID() {
 	return nextRabbitID++;
@@ -32,7 +41,7 @@ static int getAdultTime() {
 	return 3;
 }
 
-int getDeathTime() {
+int getRabbitDeathTime() {
 	return nextUDistriRandom(rabbitDeathDistri);
 }
 
@@ -41,310 +50,159 @@ void initRabbits() {
 	rabbitDeathDistri = newUDistri(0, 24);
 }
 
-RabbitList newRabbitList() {
+RList newRabbitList() {
 
-	RabbitList rl = malloc(sizeof(struct rabbitList));
+	RList rl = malloc(sizeof(struct rList));
 
 	if (rl == NULL )
 		return NULL ;
 
-	rl->list = newLinkedList(sizeof(Rabbit));
+	rl->list = newList(sizeof(Rabbit));
 
 	return rl;
 }
 
-void freeRabbitList(RabbitList rl) {
+void freeRabbitList(RList rl) {
 
 	if (rl != NULL ) {
-		freeLinkedList(rl->list);
+		freeList(rl->list);
 		free(rl);
 	}
 }
 
-Rabbit newRabbit(int birthTime) {
+Rabbit *newRabbit(Rabbit *nr, int birthTime) {
 
-	Rabbit r;
+	if (!isRabbitBreedSeason(birthTime))
+		return NULL ;
+
+	if (nr == NULL )
+		nr = malloc(sizeof(Rabbit));
+
+	if (nr == NULL )
+		return NULL ;
+
 	int at, dt;
 
-	r.birthTime = birthTime;
+	nr->birthTime = birthTime;
 
-	dt = birthTime + getDeathTime();
+	dt = birthTime + getRabbitDeathTime();
 	at = birthTime + getAdultTime();
 	if (dt < at)
 		at = dt;
-	r.adultTime = at;
-	r.deathTime = dt;
+	nr->adultTime = at;
+	nr->deathTime = dt;
 
-	return r;
+	return nr;
 
 }
 
-Rabbit *insertRabbit(RabbitList rl, Rabbit r) {
+Rabbit *insertRabbit(RList rl, Rabbit *pr) {
 
-	Rabbit *pr;
-
-	if (rl == NULL )
+	if (rl == NULL || pr == NULL )
 		return NULL ;
 
-	if ((pr = addLinkedListTail(rl->list, &r)) != NULL )
+	if ((pr = addListTail(rl->list, pr)) != NULL )
 		pr->id = getID();
 
 	return pr;
 }
 
-void insertBornRabbits(RabbitList rl, int count, int birthTime) {
+void insertNewRabbits(RList rl, int count, int birthTime) {
 
 	int i;
 
 	if (rl == NULL )
 		return;
 
-	for (i = 0; i < count; ++i)
-		insertRabbit(rl, newRabbit(birthTime));
+	Rabbit r;
+	for (i = 1; i <= count; ++i)
+		insertRabbit(rl, newRabbit(&r, birthTime));
 }
 
-int getAdultsCount(RabbitList rl, int time) {
+int getAdultsCount(RList rl, int time) {
 
 	if (rl == NULL )
 		return -1;
 
 	int count = 0;
-	LinkedListIterator iter = newLinkedListIterator(rl->list);
+	ListIter iter = newListIter(rl->list);
 	Rabbit *pr;
 
 	if (iter != NULL ) {
 
-		while ((pr = LinkedListIteratorNext(iter, NULL )) != NULL )
+		while ((pr = ListIterNext(iter, NULL )) != NULL )
 			if (pr->adultTime <= time)
 				count++;
 
-		freeLinkedListIterator(iter);
+		freeListIter(iter);
 	}
 
 	return count;
 }
 
-void deleteOldRabbits(RabbitList rl, int timeLimit) {
+int getRabbitsCount(RList rl) {
+
+	return getListCount(rl->list);
+}
+
+void deleteOldRabbits(RList rl, int timeLimit) {
 
 	if (rl == NULL )
 		return;
 
-	LinkedList tmp = newLinkedList(sizeof(Rabbit));
+	List tmp = newList(sizeof(Rabbit));
 
 	if (tmp == NULL )
 		return;
 
-	LinkedListIterator iter = newLinkedListIterator(rl->list);
+	ListIter iter = newListIter(rl->list);
 
 	if (iter == NULL ) {
-		freeLinkedList(tmp);
+		freeList(tmp);
 		return;
 	}
 
 	/* copy young rabits to a tmp list */
 	Rabbit *pr;
-	while ((pr = LinkedListIteratorNext(iter, NULL )) != NULL )
+	while ((pr = ListIterNext(iter, NULL )) != NULL )
 		if (pr->deathTime > timeLimit)
-			addLinkedListTail(tmp, pr);
-	freeLinkedListIterator(iter);
+			addListTail(tmp, pr);
+	freeListIter(iter);
 
 	/* free actual list */
-	freeLinkedList(rl->list);
+	freeList(rl->list);
 
 	/* set the young list the actual rabbit list */
 	rl->list = tmp;
 
 }
 
-void printfRabbit(Rabbit r) {
+void printfRabbit(Rabbit *r) {
 
-	printf("ID:%2d BT:%2d AT:%2d DT:%2d\n", r.id, r.birthTime, r.adultTime,
-			r.deathTime);
+	printf("ID:%2d BT:%2d AT:%2d DT:%2d\n", r->id, r->birthTime, r->adultTime,
+			r->deathTime);
 }
 
-void printfRabbitList(RabbitList rl) {
+void printfRabbitList(RList rl) {
 
 	if (rl == NULL )
 		return;
 
-	LinkedList tmp = newLinkedList(sizeof(Rabbit));
+	ListIter iter = newListIter(rl->list);
 
-	if (tmp == NULL )
+	if (iter == NULL )
 		return;
-
-	LinkedListIterator iter = newLinkedListIterator(rl->list);
-
-	if (iter == NULL ) {
-		freeLinkedList(tmp);
-		return;
-	}
 
 	Rabbit r;
-	while (LinkedListIteratorNext(iter, &r) != NULL )
-		printfRabbit(r);
-	freeLinkedListIterator(iter);
+	while (ListIterNext(iter, &r) != NULL )
+		printfRabbit(&r);
+	freeListIter(iter);
 
 }
 
-/*
- void printfRabbitsByColony(int colID);
+void removeRabbit(RList rl, int index) {
 
+	Rabbit r;
 
- static RabbitList newRabbitList(LinkedListIterator theIter, int theFilter) {
-
- if (theIter == NULL || theFilter < 1)
- return NULL ;
-
- RabbitList rl = malloc(sizeof(struct rabbitList));
-
- if (rl != NULL ) {
- rl->theIterator = theIter;
- rl->filter = theFilter;
- }
-
- return rl;
- }
-
- static void exitRabbits() {
-
- freeLinkedList(rabbits);
- }
-
- int initRabbits() {
-
- rabbits = newLinkedList(sizeof(Rabbit));
- nextRabbitID = 1;
- UDistri newUDistri(float a, float sb);
- srand(time(NULL ));
- rabbitDeathDistri = newUDistri(0, 2 * R_AVG_AGE);
- atexit(exitRabbits);
-
- return rabbits == NULL ? 1 : 0;
- }
-
- Rabbit *newRabbit(int birthTime, int colony) {
-
- Rabbit r;
- int at, dt;
-
- r.id = nextRabbitID;
- r.birthTime = birthTime;
- r.colony = colony;
-
- dt = birthTime + nextUDistriRandom(rabbitDeathDistri);
- at = birthTime + R_ADULT_AGE;
- if (dt < at)
- at = dt;
-
- r.adultTime = at;
- r.deathTime = dt;
-
- Rabbit *pr;
- if ((pr = addLinkedListTail(rabbits, &r)) != NULL )
- nextRabbitID++;
-
- return pr;
-
- }
-
- int getRabbitTime(Rabbit *r, int time) {
-
- return time - r->birthTime;
- }
-
- RabbitList getRabbitsByColony(int colID) {
-
- LinkedListIterator iter = newRabbitsIter();
-
- return iter == NULL ? NULL : newRabbitList(iter, colID);
-
- }
-
- Rabbit *nextRabbit(RabbitList rl, Rabbit *r) {
-
- if (rl == NULL || r == NULL )
- return NULL ;
-
- Rabbit nr;
- Rabbit *pr;
- while ((pr = LinkedListIteratorNext(rl->theIterator, &nr)) != NULL ) {
- if (pr->colony == rl->filter) {
- memmove(r, &nr, sizeof(Rabbit));
- return pr;
- }
- }
-
- freeRabbitList(rl);
-
- return pr;
- }
-
- void freeRabbitList(RabbitList rl) {
-
- if (rl != NULL ) {
- freeLinkedListIterator(rl->theIterator);
- free(rl);
- }
- }
-
- int getRabbitAvgAge() {
- return R_AVG_AGE;
- }
-
- int removeRabbitByID(int ID) {
-
- LinkedListIterator iter = newRabbitsIter();
-
- if (iter == NULL )
- return 1;
-
- Rabbit *pr;
- Rabbit nr;
- while ((pr = LinkedListIteratorNext(iter, &nr)) != NULL ) {
- if (pr->id == ID) {
- removeLinkedList(rabbits, &nr, getLinkedListIteratorPos(iter) - 1);
- return 0;
- }
- }
-
- return 1;
- }
-
- void printfRabbitsByColony(int colID) {
-
- RabbitList rl = getRabbitsByColony(colID);
- Rabbit r;
-
- printf("\n");
- while (nextRabbit(rl, &r) != NULL ) {
- printf("Col:%2d ID:%2d BT:%2d AT:%2d DT:%2d\n", r.colony, r.id,
- r.birthTime, r.adultTime, r.deathTime);
-
- }
-
- }
-
- void removeOldRabbits(int colID, int time) {
-
- LinkedList indexs = newLinkedList(sizeof(int));
- LinkedListIterator r = newLinkedListIterator(rabbits);
- Rabbit nr;
- int index, count;
-
- while (LinkedListIteratorNext(r, &nr) != NULL ) {
- if (time >= nr.deathTime) {
- index = getLinkedListIteratorPos(r) - 1;
- addLinkedListTail(indexs, &index);
- }
- }
-
- freeLinkedListIterator(r);
- count = 0;
- while (removeLinkedListHead(indexs, &index) != NULL ) {
- removeLinkedList(rabbits, &nr, index - count);
- count++;
- }
-
- freeLinkedList(indexs);
- }
- */
+	removeList(rl->list, &r, index);
+}

@@ -63,3 +63,12 @@ float nextExDistriRandom(ExDistri ed) {
 		;
 	return -ed.mean * log(y(ed.f, r));
 }
+
+unsigned gmod(int a, unsigned b) {
+
+	if (a >= 0)
+		return a % b;
+	a = -a;
+	return (b - a % b) % b;
+
+}

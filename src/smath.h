@@ -30,4 +30,6 @@ float nextExDistriRandom(ExDistri ed);
 flinear newflinear(float x1, float y1, float x2, float y2);
 float y(flinear fl, float x);
 
+unsigned gmod(int a, unsigned b);
+
 #endif /* SMATH_H */
