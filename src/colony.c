@@ -19,19 +19,28 @@ struct colony {
 
 	/** number of breads for the year */
 	int yearBreads;
+
+	int inBreedSeason;
 };
 
-UDistri breads;
+/** numero médio de crias por ninhada */
+static int avgRabbitsByCouple;
+
+/** numero médio de ninhadas por ano */
+static int avgBreedsByYear;
+/** gerador aleatório de ninhadas por ano */
+static UDistri breadsByYear;
+
+static int getBreadsByYear() {
+
+	return nextUDistriRandom(breadsByYear);
+}
 
 void initColony() {
 
-	breads = newUDistri(0, 8);
+	breadsByYear = newUDistri(0, 8);
 }
 
-static int getBreads() {
-
-	return nextUDistriRandom(breads);
-}
 /**
  * Cria uma nova Colónia
  *
@@ -62,7 +71,7 @@ Colony newColony(int initCount, int time) {
 	/* how many mounths left in the year */
 	time = 11 - time % 12;
 
-	nc->yearBreads = getBreads() * time / 12;
+	nc->yearBreads = getBreadsByYear() * time / 12;
 
 	printfRabbitList(nc->rl);
 
