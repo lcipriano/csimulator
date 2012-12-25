@@ -17,7 +17,7 @@ Colony newColony(int initCount, int atTime);
 void freeColony(Colony c);
 Colony newColonyWithRabbits(RList rl);
 void updateColony(Colony c, int time);
-
 int huntRabbit(Colony rl);
+void printfColony(Colony c);
 
 #endif /* COLONY_H_ */

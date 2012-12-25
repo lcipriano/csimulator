@@ -13,6 +13,7 @@
 #include "rabbits.h"
 #include "smath.h"
 #include "lists.h"
+#include "date.h"
 
 #define R_ADULT_AGE 3
 #define R_AVG_AGE 24
@@ -21,33 +22,50 @@ struct rList {
 	List list;
 };
 
+/** */
 static int nextRabbitID;
 static UDistri rabbitDeathDistri;
 
-static int isRabbitBreedSeason(int time) {
-	printf("1- %d ", time);
-	time = gmod(time, 12);
-	/* consider between FEV and SET */
-	printf("2- %d\n", time);
-	return 1 <= time && time <= 8 ? 1 : 0;
+/** Rabbit Constansts */
+static int startBreedMonth;
+static int endBreedMonth;
+static int averageRabbitLife;
 
+int getStartRabbitBreedMonth() {
+	return startBreedMonth;
 }
 
-static int getID() {
+int getEndRabbitBreedMonth() {
+	return endBreedMonth;
+}
+
+static int isRabbitBreedSeason(int time) {
+
+	time = gmod(time, 12);
+	return getStartRabbitBreedMonth() <= time
+			&& time <= getEndRabbitBreedMonth() ? 1 : 0;
+}
+
+static int getNextRabbitID() {
 	return nextRabbitID++;
 }
 
-static int getAdultTime() {
+static int getNextRabitAdultAge() {
 	return 3;
 }
 
-int getRabbitDeathTime() {
+int getNextRabbitTimeLife() {
 	return nextUDistriRandom(rabbitDeathDistri);
 }
 
 void initRabbits() {
+
 	nextRabbitID = 1;
 	rabbitDeathDistri = newUDistri(0, 24);
+
+	startBreedMonth = FEV;
+	endBreedMonth = SET;
+	averageRabbitLife = 24; /** time in months */
 }
 
 RList newRabbitList() {
@@ -85,8 +103,8 @@ Rabbit *newRabbit(Rabbit *nr, int birthTime) {
 
 	nr->birthTime = birthTime;
 
-	dt = birthTime + getRabbitDeathTime();
-	at = birthTime + getAdultTime();
+	dt = birthTime + getNextRabbitTimeLife();
+	at = birthTime + getNextRabitAdultAge();
 	if (dt < at)
 		at = dt;
 	nr->adultTime = at;
@@ -102,7 +120,7 @@ Rabbit *insertRabbit(RList rl, Rabbit *pr) {
 		return NULL ;
 
 	if ((pr = addListTail(rl->list, pr)) != NULL )
-		pr->id = getID();
+		pr->id = getNextRabbitID();
 
 	return pr;
 }

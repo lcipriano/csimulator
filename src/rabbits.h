@@ -18,6 +18,12 @@ typedef struct {
 
 void initRabbits();
 
+int getStartRabbitBreedMonth();
+
+int getEndRabbitBreedMonth();
+
+int getNextRabbitTimeLife();
+
 Rabbit *newRabbit(Rabbit *nr, int birthTime);
 
 /**
@@ -45,7 +51,5 @@ void deleteOldRabbits(RList rl, int timeLimit);
 void printfRabbit(Rabbit *r);
 
 void printfRabbitList(RList rl);
-
-int getRabbitDeathTime();
 
 #endif /* RABBITS_H_ */

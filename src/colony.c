@@ -23,29 +23,43 @@ struct colony {
 	int inBreedSeason;
 };
 
+/***/
+/** número médio de ninhadas por temporada */
+static int avgBreedsBySeason;
 /** numero médio de crias por ninhada */
 static int avgRabbitsByCouple;
 
-/** numero médio de ninhadas por ano */
-static int avgBreedsByYear;
-/** gerador aleatório de ninhadas por ano */
-static UDistri breadsByYear;
+/** gerador aleatório de ninhadas por mês */
+static PoDistri rabbitBreedsByMonth;
 
-static int getBreadsByYear() {
+static int getBreedsByMonth() {
 
-	return nextUDistriRandom(breadsByYear);
+	return nextPoDistriRandom(rabbitBreedsByMonth);
+}
+
+int getRabbitsByCouple() {
+
+	return avgRabbitsByCouple;
 }
 
 void initColony() {
 
-	breadsByYear = newUDistri(0, 8);
+	avgBreedsBySeason = 9;
+	/** numero médio de crias por ninhada */
+	avgRabbitsByCouple = 5;
+
+	rabbitBreedsByMonth =
+			newPoDistri(
+					(float) avgBreedsBySeason
+							/ (getEndRabbitBreedMonth()
+									- getStartRabbitBreedMonth() + 1));
 }
 
 /**
  * Cria uma nova Colónia
  *
- * @param initCount Número inicial de coelhos
- * @param time		Tempo em que a Colónia é criada
+ * @param initCount número inicial de coelhos
+ * @param time		tempo em que a Colónia é criada
  * @return			ponteiro para uma nova Colónia
  */
 Colony newColony(int initCount, int time) {
@@ -64,16 +78,7 @@ Colony newColony(int initCount, int time) {
 	int i;
 	Rabbit r;
 	for (i = 1; i <= initCount; ++i)
-		insertRabbit(nc->rl, newRabbit(&r, time - getRabbitDeathTime()));
-
-	/* calc how many breeds for the rest of the year */
-
-	/* how many mounths left in the year */
-	time = 11 - time % 12;
-
-	nc->yearBreads = getBreadsByYear() * time / 12;
-
-	printfRabbitList(nc->rl);
+		insertRabbit(nc->rl, newRabbit(&r, time - getNextRabbitTimeLife()));
 
 	return nc;
 }
@@ -90,11 +95,19 @@ void freeColony(Colony c) {
 
 void updateColony(Colony c, int time) {
 
-	insertNewRabbits(c->rl, getAdultsCount(c->rl, time) * 5 / 2, time);
+	/* breed rabbits */
+
+	/* calc number of couple rabbits */
+	int nCouples = getAdultsCount(c->rl, time) / 2;
+
+	/* number of breeds in this time/month */
+	int nBreeds = getBreedsByMonth(), i;
+	for (i = 1; i <= nBreeds; ++i)
+		insertNewRabbits(c->rl, nCouples * getRabbitsByCouple(), time);
+
+	printf("nc = %d  nb = %d\n",nCouples,nBreeds);
 
 	deleteOldRabbits(c->rl, time);
-
-	printfRabbitList(c->rl);
 
 }
 
@@ -113,4 +126,8 @@ int huntRabbit(Colony c) {
 	removeRabbit(c->rl, nextUDistriRandom(d));
 
 	return 1;
+}
+
+void printfColony(Colony c) {
+	printfRabbitList(c->rl);
 }
