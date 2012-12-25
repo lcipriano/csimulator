@@ -6,6 +6,7 @@
  */
 
 #include <stdlib.h>
+#include <stdio.h>
 
 #include "lists.h"
 #include "colony.h"
@@ -98,14 +99,14 @@ void updateColony(Colony c, int time) {
 	/* breed rabbits */
 
 	/* calc number of couple rabbits */
-	int nCouples = getAdultsCount(c->rl, time) / 2;
+	int nCouples = getRabbitsAdultsCount(c->rl, time) / 2;
 
 	/* number of breeds in this time/month */
 	int nBreeds = getBreedsByMonth(), i;
 	for (i = 1; i <= nBreeds; ++i)
 		insertNewRabbits(c->rl, nCouples * getRabbitsByCouple(), time);
 
-	printf("nc = %d  nb = %d\n",nCouples,nBreeds);
+	printf("nc = %d  nb = %d\n", nCouples, nBreeds);
 
 	deleteOldRabbits(c->rl, time);
 

@@ -44,7 +44,7 @@ void removeRabbit(RList rl, int index);
 
 int getRabbitsCount(RList rl);
 
-int getAdultsCount(RList rl, int time);
+int getRabbitsAdultsCount(RList rl, int time);
 
 void deleteOldRabbits(RList rl, int timeLimit);
 

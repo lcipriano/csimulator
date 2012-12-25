@@ -61,11 +61,11 @@ int getNextRabbitTimeLife() {
 void initRabbits() {
 
 	nextRabbitID = 1;
-	rabbitDeathDistri = newUDistri(0, 24);
-
+	averageRabbitLife = 24; /** time in months */
 	startBreedMonth = FEV;
 	endBreedMonth = SET;
-	averageRabbitLife = 24; /** time in months */
+
+	rabbitDeathDistri = newUDistri(0, averageRabbitLife * 2);
 }
 
 RList newRabbitList() {
@@ -137,7 +137,7 @@ void insertNewRabbits(RList rl, int count, int birthTime) {
 		insertRabbit(rl, newRabbit(&r, birthTime));
 }
 
-int getAdultsCount(RList rl, int time) {
+int getRabbitsAdultsCount(RList rl, int time) {
 
 	if (rl == NULL )
 		return -1;
