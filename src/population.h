@@ -19,10 +19,10 @@ typedef struct {
 	int endBreedTime;
 
 	/** idade adulta */
-	int adultTime;
+	int adultAge;
 
 	/** tempo médio de vida */
-	int avgTimeLife;
+	int avgTimeAge;
 
 	/** número médio de ninhadas por temporada */
 	int avgBreedsBySeason;
@@ -45,12 +45,12 @@ Population *newPopulation(Population *p,int sbt, int ebt, int at, int atl, int a
 
 int getNextID(Population *p);
 
-int getStartBreedTime(Population *p);
+int getLifeAge(Population *p);
 
-int getEndBreedTime(Population *p);
-
-int getLifeDuration(Population *p);
+int getAdultAge(Population *p);
 
 int getBreeds(Population *p);
 
 int getKits(Population *p);
+
+int isBreedSeason(Population *p,int time);

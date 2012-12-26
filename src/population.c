@@ -27,10 +27,10 @@ Population *newPopulation(Population *p, int sbt, int ebt, int at, int atl,
 	p->endBreedTime = ebt;
 
 	/** idade adulta */
-	p->adultTime = at;
+	p->adultAge = at;
 
 	/** tempo médio de vida */
-	p->avgTimeLife = atl;
+	p->avgTimeAge = atl;
 
 	/** número médio de ninhadas por temporada */
 	p->avgBreedsBySeason = abs;
@@ -63,8 +63,12 @@ int getEndBreedTime(Population *p) {
 	return p != NULL ? p->endBreedTime : -1;
 }
 
-int getLifeDuration(Population *p) {
+int getLifeAge(Population *p) {
 	return p != NULL ? nextUDistriRandom(p->timeLifeDistri) : -1;
+}
+
+int getAdultAge(Population *p) {
+	return p != NULL ? p->adultAge : -1;
 }
 
 int getBreeds(Population *p) {
@@ -73,4 +77,12 @@ int getBreeds(Population *p) {
 
 int getKits(Population *p) {
 	return p != NULL ? nextPoDistriRandom(p->kitsDistri) : -1;
+}
+
+int isBreedSeason(Population *p, int time) {
+
+	if (p == NULL )
+		return 0;
+	time = gmod(time, 12);
+	return p->startBreedTime <= time && time <= p->endBreedTime ? 1 : 0;
 }
