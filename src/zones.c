@@ -5,12 +5,12 @@
  *      Author: lcipriano
  */
 
-#include "colony.h"
+#include "rcolony.h"
 #include "zones.h"
 
 struct zone {
 
-	Colony c;
+	RColony c;
 
 };
 

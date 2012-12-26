@@ -37,7 +37,7 @@ static int getNextFoxID() {
 }
 
 static int getNextFoxAdultAge() {
-	return 12;
+	return 10;
 }
 
 int getNextFoxTimeLife() {
@@ -85,7 +85,7 @@ Fox *newFox(Fox *nf, int birthTime, float x, float y) {
 
 void printfFox(Fox *r) {
 
-	printf("ID:%2d BT:%2d AT:%2d DT:%2d\n", r->id, r->birthTime, r->adultTime,
+	printf("Fox#%2d BT:%2d AT:%2d DT:%2d\n", r->id, r->birthTime, r->adultTime,
 			r->deathTime);
 }
 

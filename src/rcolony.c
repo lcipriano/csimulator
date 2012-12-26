@@ -1,5 +1,5 @@
 /*
- * colony.c
+ * RColony.c
  *
  *  Created on: Dec 16, 2012
  *      Author: lcipriano
@@ -9,22 +9,16 @@
 #include <stdio.h>
 
 #include "lists.h"
-#include "colony.h"
+#include "rcolony.h"
 #include "rlist.h"
 #include "smath.h"
 
-struct colony {
-
+struct rColony {
 	/** repository for the Rabbits */
 	RList rl;
 
-	/** number of breads for the year */
-	int yearBreads;
-
-	int inBreedSeason;
 };
 
-/***/
 /** número médio de ninhadas por temporada */
 static int avgBreedsBySeason;
 /** numero médio de crias por ninhada */
@@ -43,7 +37,7 @@ int getRabbitsByCouple() {
 	return avgRabbitsByCouple;
 }
 
-void initColony() {
+void initRColony() {
 
 	avgBreedsBySeason = 9;
 	/** numero médio de crias por ninhada */
@@ -63,9 +57,9 @@ void initColony() {
  * @param time		tempo em que a Colónia é criada
  * @return			ponteiro para uma nova Colónia
  */
-Colony newColony(int initCount, int time) {
+RColony newRColony(int initCount, int time) {
 
-	Colony nc = malloc(sizeof(struct colony));
+	RColony nc = malloc(sizeof(struct rColony));
 
 	if (nc == NULL )
 		return NULL ;
@@ -84,7 +78,7 @@ Colony newColony(int initCount, int time) {
 	return nc;
 }
 
-void freeColony(Colony c) {
+void freeRColony(RColony c) {
 
 	if (c == NULL )
 		return;
@@ -94,7 +88,7 @@ void freeColony(Colony c) {
 	free(c);
 }
 
-void updateColony(Colony c, int time) {
+void updateRColony(RColony c, int time) {
 
 	/* breed rabbits */
 
@@ -112,7 +106,7 @@ void updateColony(Colony c, int time) {
 
 }
 
-int huntRabbit(Colony c) {
+int huntRabbit(RColony c) {
 
 	if (c == NULL )
 		return 0;
@@ -129,6 +123,6 @@ int huntRabbit(Colony c) {
 	return 1;
 }
 
-void printfColony(Colony c) {
+void printfRColony(RColony c) {
 	printfRabbitList(c->rl);
 }

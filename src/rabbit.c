@@ -89,6 +89,6 @@ Rabbit *newRabbit(Rabbit *nr, int birthTime) {
 
 void printfRabbit(Rabbit *r) {
 
-	printf("ID:%2d BT:%2d AT:%2d DT:%2d\n", r->id, r->birthTime, r->adultTime,
-			r->deathTime);
+	printf("Rabbit#%2d BT:%2d AT:%2d DT:%2d\n", r->id, r->birthTime,
+			r->adultTime, r->deathTime);
 }
