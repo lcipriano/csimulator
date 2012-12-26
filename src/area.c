@@ -9,7 +9,7 @@
 
 #include "area.h"
 #include "smath.h"
-#include "foxs.h"
+#include "flist.h"
 #include "zones.h"
 
 typedef struct {

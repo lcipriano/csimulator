@@ -41,16 +41,12 @@ void freeRabbitList(RList rl) {
 	}
 }
 
-
 Rabbit *insertRabbit(RList rl, Rabbit *pr) {
 
 	if (rl == NULL || pr == NULL )
 		return NULL ;
 
-	if ((pr = addListTail(rl->list, pr)) != NULL )
-		pr->id = getNextRabbitID();
-
-	return pr;
+	return addListTail(rl->list, pr);
 }
 
 void insertNewRabbits(RList rl, int count, int birthTime) {

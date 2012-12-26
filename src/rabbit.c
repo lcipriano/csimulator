@@ -48,7 +48,7 @@ static int isRabbitBreedSeason(int time) {
 			&& time <= getEndRabbitBreedMonth() ? 1 : 0;
 }
 
-int getNextRabbitID() {
+static int getNextRabbitID() {
 	return nextRabbitID++;
 }
 
@@ -81,6 +81,7 @@ Rabbit *newRabbit(Rabbit *nr, int birthTime) {
 		at = dt;
 	nr->adultTime = at;
 	nr->deathTime = dt;
+	nr->id = getNextRabbitID();
 
 	return nr;
 

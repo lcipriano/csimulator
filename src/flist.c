@@ -10,7 +10,7 @@
 #include <stdio.h>
 #include <math.h>
 
-#include "foxs.h"
+#include "flist.h"
 #include "smath.h"
 #include "lists.h"
 #include "date.h"
@@ -19,45 +19,6 @@
 struct fList {
 	List list;
 };
-
-/** */
-static int nextFoxID;
-static UDistri foxDeathDistri;
-
-/** Fox Constansts */
-static int breedMonth;
-static int averageFoxLife;
-
-int getFoxBreedMonth() {
-	return breedMonth;
-}
-
-static int isFoxBreedSeason(int time) {
-
-	return gmod(time, 12) == breedMonth ? 1 : 0;
-}
-
-static int getNextFoxID() {
-	return nextFoxID++;
-}
-
-static int getNextFoxAdultAge() {
-	return 12;
-}
-
-int getNextFoxTimeLife() {
-	return nextUDistriRandom(foxDeathDistri);
-}
-
-void initFoxs() {
-
-	nextFoxID = 1;
-	/** time in months */
-	averageFoxLife = 60;
-	breedMonth = ABR;
-
-	foxDeathDistri = newUDistri(0, averageFoxLife * 2);
-}
 
 FList newFoxList() {
 
@@ -79,43 +40,12 @@ void freeFoxList(FList fl) {
 	}
 }
 
-Fox *newFox(Fox *nf, int birthTime, float x, float y) {
-
-	if (!isFoxBreedSeason(birthTime))
-		return NULL ;
-
-	if (nf == NULL )
-		nf = malloc(sizeof(Fox));
-
-	if (nf == NULL )
-		return NULL ;
-
-	int at, dt;
-
-	nf->birthTime = birthTime;
-
-	dt = birthTime + getNextFoxTimeLife();
-	at = birthTime + getNextFoxAdultAge();
-	if (dt < at)
-		at = dt;
-	nf->adultTime = at;
-	nf->deathTime = dt;
-	nf->x = x;
-	nf->y = y;
-
-	return nf;
-
-}
-
 Fox *insertFox(FList fl, Fox *pr) {
 
 	if (fl == NULL || pr == NULL )
 		return NULL ;
 
-	if ((pr = addListTail(fl->list, pr)) != NULL )
-		pr->id = getNextFoxID();
-
-	return pr;
+	return addListTail(fl->list, pr);
 }
 
 void insertNewFoxs(FList fl, int count, int birthTime) {
@@ -187,12 +117,6 @@ void deleteOldFoxs(FList fl, int timeLimit) {
 	/* set the young list the actual Fox list */
 	fl->list = tmp;
 
-}
-
-void printfFox(Fox *r) {
-
-	printf("ID:%2d BT:%2d AT:%2d DT:%2d\n", r->id, r->birthTime, r->adultTime,
-			r->deathTime);
 }
 
 void printfFoxList(FList fl) {

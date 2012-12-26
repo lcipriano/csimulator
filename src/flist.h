@@ -1,37 +1,14 @@
 /*
- * foxs.h
+ * flist.h
  *
  *  Created on: Dec 16, 2012
  *      Author: lcipriano
  */
 
-#ifndef FOXS_H_
-#define FOXS_H_
+#ifndef FLIST_H_
+#define FLIST_H_
 
-/**
- * Foxs
- */
-
-typedef struct {
-	/* location */
-	float x, y;
-	int id, birthTime, adultTime, deathTime;
-	float energy;
-
-} Fox;
-
-Fox *newFox(Fox *f, int birth, float x, float y);
-void eat(Fox *f);
-
-void initFoxs();
-
-int getFoxBreedMonth();
-
-int getNextFoxTimeLife();
-
-/**
- * Fox Lists
- */
+#include "fox.h"
 
 typedef struct fList *FList;
 
@@ -51,8 +28,6 @@ int getFoxsAdultsCount(FList rl, int time);
 
 void deleteOldFoxs(FList rl, int timeLimit);
 
-void printfFox(Fox *r);
-
 void printfFoxList(FList rl);
 
-#endif /* FOXS_H_ */
+#endif /* FOX_H_ */
