@@ -8,9 +8,10 @@
 #ifndef RLIST_H_
 #define RLIST_H_
 
+#include "alist.h"
 #include "rabbit.h"
 
-typedef struct rList *RList;
+typedef AList RList;
 
 RList newRabbitList();
 

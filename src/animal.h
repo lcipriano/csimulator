@@ -8,14 +8,14 @@
 #ifndef ANIMAL_H
 #define ANIMAL_H
 
-#include "population.h"
+#include "poptype.h"
 
 typedef struct {
 	int id, birthTime, adultTime, deathTime;
-	float x, y;
+	float x, y, energy;
 } Animal;
 
-Animal *newAnimal(Animal *nr, Population *p,int birthTime);
+Animal *newAnimal(Animal *nr, PopType *p, int birthTime);
 
 void printfAnimal(Animal *r);
 

@@ -8,18 +8,12 @@
 #ifndef RABBIT_H_
 #define RABBIT_H_
 
-typedef struct {
-	int id, birthTime, adultTime, deathTime;
-	float x, y;
-} Rabbit;
+#include "animal.h"
+#include "poptype.h"
 
-void initRabbits();
+typedef Animal Rabbit;
 
-int getStartRabbitBreedMonth();
-
-int getEndRabbitBreedMonth();
-
-int getNextRabbitTimeLife();
+void initRabbits(PopType *pt);
 
 Rabbit *newRabbit(Rabbit *nr, int birthTime);
 

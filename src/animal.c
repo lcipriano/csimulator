@@ -10,7 +10,7 @@
 
 #include "animal.h"
 
-Animal *newAnimal(Animal *nr, Population *p, int birthTime) {
+Animal *newAnimal(Animal *nr, PopType *p, int birthTime) {
 
 	if (p == NULL )
 		return NULL ;

@@ -19,19 +19,5 @@ int main(void) {
 	int i;
 	int n = 3;
 
-	initRabbits();
-	initColony();
-
-	Colony c = newColony(16, 0);
-	printfColony(c);
-
-	for (i = 1; i <= n; ++i) {
-		printf("time : %d\n", i);
-		updateColony(c, i);
-		printfColony(c);
-	}
-
-	freeColony(c);
-
 	exit(0);
 }
