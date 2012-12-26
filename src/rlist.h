@@ -1,34 +1,14 @@
 /*
- * rabbits2.h
+ * rlist.h
  *
- *  Created on: Dec 20, 2012
+ *  Created on: Dec 26, 2012
  *      Author: lcipriano
  */
 
-#ifndef RABBITS_H_
-#define RABBITS_H_
+#ifndef RLIST_H_
+#define RLIST_H_
 
-/*
- * Rabbit
- */
-
-typedef struct {
-	int id, birthTime, adultTime, deathTime;
-} Rabbit;
-
-void initRabbits();
-
-int getStartRabbitBreedMonth();
-
-int getEndRabbitBreedMonth();
-
-int getNextRabbitTimeLife();
-
-Rabbit *newRabbit(Rabbit *nr, int birthTime);
-
-/**
- * Rabbit Lists
- */
+#include "rabbit.h"
 
 typedef struct rList *RList;
 
@@ -48,8 +28,6 @@ int getRabbitsAdultsCount(RList rl, int time);
 
 void deleteOldRabbits(RList rl, int timeLimit);
 
-void printfRabbit(Rabbit *r);
-
 void printfRabbitList(RList rl);
 
-#endif /* RABBITS_H_ */
+#endif /* RLIST_H_ */

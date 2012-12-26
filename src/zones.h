@@ -10,10 +10,8 @@
 
 #include "colony.h"
 
-typedef struct {
+typedef struct zone *Zone;
 
-	Colony c;
-
-} zone;
+void updateZone(Zone z);
 
 #endif /* ZONES_H_ */

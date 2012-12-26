@@ -8,9 +8,10 @@
 #ifndef AREA_H_
 #define AREA_H_
 
-typedef struct {
-	float xb, yb, tx, ty;
-	int xgrid,ygrid;
-} area;
+void setArea(float xb, float yb, float tx, float ty, int xgrid, int ygrid);
+
+void getRandomCoords(float *x, float *y);
+
+void updateArea();
 
 #endif /* AREA_H_ */

@@ -8,7 +8,7 @@
 #ifndef COLONY_H_
 #define COLONY_H_
 
-#include "rabbits.h"
+#include "rlist.h"
 
 typedef struct colony *Colony;
 

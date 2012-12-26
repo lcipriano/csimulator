@@ -10,7 +10,7 @@
 
 #include "lists.h"
 #include "colony.h"
-#include "rabbits.h"
+#include "rlist.h"
 #include "smath.h"
 
 struct colony {
