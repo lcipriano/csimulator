@@ -12,7 +12,7 @@
 #include <stdlib.h>
 
 #include "smath.h"
-#include "rcolony.h"
+#include "colony.h"
 
 int main(void) {
 
@@ -20,18 +20,18 @@ int main(void) {
 	int n = 3;
 
 	initRabbits();
-	initRColony();
+	initColony();
 
-	RColony c = newRColony(16, 0);
-	printfRColony(c);
+	Colony c = newColony(16, 0);
+	printfColony(c);
 
 	for (i = 1; i <= n; ++i) {
 		printf("time : %d\n", i);
-		updateRColony(c, i);
-		printfRColony(c);
+		updateColony(c, i);
+		printfColony(c);
 	}
 
-	freeRColony(c);
+	freeColony(c);
 
 	exit(0);
 }

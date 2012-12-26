@@ -8,7 +8,7 @@
 #ifndef ZONES_H_
 #define ZONES_H_
 
-#include "rcolony.h"
+#include "colony.h"
 
 typedef struct zone *Zone;
 
