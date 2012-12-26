@@ -8,21 +8,14 @@
 #ifndef FOX_H_
 #define FOX_H_
 
-typedef struct {
-	float x, y;
-	int id, birthTime, adultTime, deathTime;
-	float energy;
-} Fox;
+#include "animal.h"
+#include "poptype.h"
 
-void initFoxs();
+typedef Animal Fox;
 
-Fox *newFox(Fox *f, int birth, float x, float y);
+void initFoxs(PopType *pt);
 
-void eat(Fox *f);
-
-int getFoxBreedMonth();
-
-int getNextFoxTimeLife();
+Fox *newFox(Fox *nr, int birthTime);
 
 void printfFox(Fox *r);
 

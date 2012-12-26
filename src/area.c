@@ -9,14 +9,14 @@
 
 #include "area.h"
 #include "smath.h"
-#include "flist.h"
+#include "alist.h"
 #include "zones.h"
 
 typedef struct {
 	float xb, yb, tx, ty;
 	int xgrid, ygrid;
 	UDistri XDistri, YDistri;
-	FList foxList;
+	AList foxList;
 	Zone *zones;
 	int nZones;
 } Area;
@@ -35,7 +35,7 @@ void setArea(float x1, float y1, float x2, float y2, int nx, int ny) {
 	theArea.XDistri = newUDistri(x1, x2);
 	theArea.YDistri = newUDistri(y1, y2);
 
-	theArea.foxList = newFoxList();
+	theArea.foxList = newAnimalList();
 
 	int nZones = nx * ny;
 	theArea.zones = malloc(nZones * sizeof(Zone));

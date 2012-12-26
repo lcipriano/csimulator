@@ -5,56 +5,19 @@
  *      Author: lcipriano
  */
 
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 
-#include "lists.h"
 #include "colony.h"
-#include "rlist.h"
-#include "smath.h"
 
 struct colony {
 
-	/** repository for the Rabbits */
-	RList rl;
+	/** repository for the Animals */
+	AList rabbitList;
 
-	/** number of breads for the year */
-	int yearBreads;
-
-	int inBreedSeason;
+	/** population type */
+	PopType *popType;
 };
-
-/***/
-/** número médio de ninhadas por temporada */
-static int avgBreedsBySeason;
-/** numero médio de crias por ninhada */
-static int avgRabbitsByCouple;
-
-/** gerador aleatório de ninhadas por mês */
-static PoDistri rabbitBreedsByMonth;
-
-static int getBreedsByMonth() {
-
-	return nextPoDistriRandom(rabbitBreedsByMonth);
-}
-
-int getRabbitsByCouple() {
-
-	return avgRabbitsByCouple;
-}
-
-void initColony() {
-
-	avgBreedsBySeason = 9;
-	/** numero médio de crias por ninhada */
-	avgRabbitsByCouple = 5;
-
-	rabbitBreedsByMonth =
-			newPoDistri(
-					(float) avgBreedsBySeason
-							/ (getEndRabbitBreedMonth()
-									- getStartRabbitBreedMonth() + 1));
-}
 
 /**
  * Cria uma nova Colónia
@@ -63,23 +26,29 @@ void initColony() {
  * @param time		tempo em que a Colónia é criada
  * @return			ponteiro para uma nova Colónia
  */
-Colony newColony(int initCount, int time) {
+Colony newColony(PopType *pt, int initCount, int time) {
 
 	Colony nc = malloc(sizeof(struct colony));
 
 	if (nc == NULL )
 		return NULL ;
 
-	nc->rl = newRabbitList();
-	if (nc->rl == NULL ) {
+	nc->rabbitList = newAnimalList();
+	if (nc->rabbitList == NULL ) {
 		free(nc);
 		return NULL ;
 	}
 
 	int i;
-	Rabbit r;
-	for (i = 1; i <= initCount; ++i)
-		insertRabbit(nc->rl, newRabbit(&r, time - getNextRabbitTimeLife()));
+	Animal r;
+	for (i = 1; i <= initCount; ++i) {
+		printf("%d ", i);
+		insertAnimal(nc->rabbitList, newAnimal(&r, pt, time - getLifeAge(pt)));
+	}
+
+	nc->popType = pt;
+
+	printfAnimalList(nc->rabbitList);
 
 	return nc;
 }
@@ -89,46 +58,47 @@ void freeColony(Colony c) {
 	if (c == NULL )
 		return;
 
-	freeRabbitList(c->rl);
+	freeAnimalList(c->rabbitList);
 
 	free(c);
 }
 
 void updateColony(Colony c, int time) {
 
-	/* breed rabbits */
+	/* breed Animals */
 
-	/* calc number of couple rabbits */
-	int nCouples = getRabbitsAdultsCount(c->rl, time) / 2;
+	/* calc number of couple Animals */
+	int nCouples = getAdultsCount(c->rabbitList, time) / 2;
 
 	/* number of breeds in this time/month */
-	int nBreeds = getBreedsByMonth(), i;
+	int nBreeds = getBreeds(c->popType), i;
 	for (i = 1; i <= nBreeds; ++i)
-		insertNewRabbits(c->rl, nCouples * getRabbitsByCouple(), time);
+		insertNewAnimals(c->rabbitList, nCouples * getKits(c->popType), time,
+				c->popType);
 
 	printf("nc = %d  nb = %d\n", nCouples, nBreeds);
 
-	deleteOldRabbits(c->rl, time);
+	deleteOldAnimals(c->rabbitList, time);
 
 }
 
-int huntRabbit(Colony c) {
+int huntAnimal(Colony c) {
 
 	if (c == NULL )
 		return 0;
 
-	int count = getRabbitsCount(c->rl);
+	int count = getAnimalsCount(c->rabbitList);
 	if (count == 0)
 		return 0;
 
-	/* generate a uniform distribution with the number of rabbits */
+	/* generate a uniform distribution with the number of Animals */
 	UDistri d = newUDistri(1, count);
 
-	removeRabbit(c->rl, nextUDistriRandom(d));
+	removeAnimal(c->rabbitList, nextUDistriRandom(d));
 
 	return 1;
 }
 
 void printfColony(Colony c) {
-	printfRabbitList(c->rl);
+	printfAnimalList(c->rabbitList);
 }

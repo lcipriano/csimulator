@@ -15,77 +15,21 @@
 #include "date.h"
 #include "area.h"
 
-/** */
-static int nextFoxID;
-static UDistri foxDeathDistri;
+static PopType *foxType;
 
-/** Fox Constansts */
-static int breedMonth;
-static int averageFoxLife;
+void initFoxs(PopType *pt) {
 
-int getFoxBreedMonth() {
-	return breedMonth;
+	foxType = pt;
 }
 
-static int isFoxBreedSeason(int time) {
+Fox *newFox(Fox *nr, int birthTime) {
 
-	return gmod(time, 12) == breedMonth ? 1 : 0;
+	return newAnimal(nr, foxType, birthTime);
 }
 
-static int getNextFoxID() {
-	return nextFoxID++;
+void printfFoxt(Fox *r) {
+
+	printf("Fox\n");
+
+	printfAnimal(r);
 }
-
-static int getNextFoxAdultAge() {
-	return 12;
-}
-
-int getNextFoxTimeLife() {
-	return nextUDistriRandom(foxDeathDistri);
-}
-
-void initFoxs() {
-
-	nextFoxID = 1;
-	/** time in months */
-	averageFoxLife = 60;
-	breedMonth = ABR;
-
-	foxDeathDistri = newUDistri(0, averageFoxLife * 2);
-}
-
-Fox *newFox(Fox *nf, int birthTime, float x, float y) {
-
-	if (!isFoxBreedSeason(birthTime))
-		return NULL ;
-
-	if (nf == NULL )
-		nf = malloc(sizeof(Fox));
-
-	if (nf == NULL )
-		return NULL ;
-
-	int at, dt;
-
-	nf->birthTime = birthTime;
-
-	dt = birthTime + getNextFoxTimeLife();
-	at = birthTime + getNextFoxAdultAge();
-	if (dt < at)
-		at = dt;
-	nf->adultTime = at;
-	nf->deathTime = dt;
-	nf->x = x;
-	nf->y = y;
-	nf->id = getNextFoxID();
-
-	return nf;
-
-}
-
-void printfFox(Fox *r) {
-
-	printf("ID:%2d BT:%2d AT:%2d DT:%2d\n", r->id, r->birthTime, r->adultTime,
-			r->deathTime);
-}
-
