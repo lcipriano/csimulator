@@ -41,16 +41,16 @@ typedef struct {
 
 } Population;
 
-Population newPopulation(int sbt, int ebt, int at, int atl, int abs, int akc);
+Population *newPopulation(Population *p,int sbt, int ebt, int at, int atl, int abs, int akc);
 
-int getNextID(Population p);
+int getNextID(Population *p);
 
-int getStartBreedTime(Population p);
+int getStartBreedTime(Population *p);
 
-int getEndBreedTime(Population p);
+int getEndBreedTime(Population *p);
 
-int getLifeDuration(Population p);
+int getLifeDuration(Population *p);
 
-int getBreeds(Population p);
+int getBreeds(Population *p);
 
-int getKits(Population p);
+int getKits(Population *p);
