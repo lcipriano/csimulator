@@ -13,8 +13,6 @@
 
 typedef struct {
 
-	int nextID;
-
 	/** início da temporada de gestação */
 	int startBreedTime;
 

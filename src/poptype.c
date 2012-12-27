@@ -9,16 +9,14 @@
 
 #include "poptype.h"
 
-PopType *newPopType(PopType *p, int sbt, int ebt, int at, int atl,
-		int abs, int akc) {
+PopType *newPopType(PopType *p, int sbt, int ebt, int at, int atl, int abs,
+		int akc) {
 
 	if (p == NULL )
 		p = malloc(sizeof(PopType));
 
 	if (p == NULL )
 		return NULL ;
-
-	p->nextID = 1;
 
 	/** início da temporada de gestação */
 	p->startBreedTime = sbt;
@@ -49,10 +47,6 @@ PopType *newPopType(PopType *p, int sbt, int ebt, int at, int atl,
 
 	return p;
 
-}
-
-int getNextID(PopType *p) {
-	return p != NULL ? p->nextID++ : -1;
 }
 
 int getStartBreedTime(PopType *p) {
