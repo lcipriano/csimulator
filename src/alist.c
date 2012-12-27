@@ -109,7 +109,7 @@ void deleteOldAnimals(AList al, int timeLimit) {
 		return;
 	}
 
-	/* copy young rabits to a tmp list */
+	/* copy youngs to a tmp list */
 	Animal *pr;
 	while ((pr = ListIterNext(iter, NULL )) != NULL )
 		if (pr->deathTime > timeLimit)

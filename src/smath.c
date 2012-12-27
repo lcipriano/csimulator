@@ -7,6 +7,7 @@
 
 #include <stdlib.h>
 #include <math.h>
+#include <time.h>
 
 #include "smath.h"
 
@@ -32,9 +33,22 @@ float y(flinear fl, float x) {
 	return fl.m * x + fl.b;
 }
 
+static void initDistris() {
+
+	static int firstUse = 1;
+
+	if (firstUse) {
+		srand(time(NULL ));
+		firstUse = 0;
+	}
+
+}
+
 UDistri newUDistri(float a, float b) {
 
 	UDistri ud;
+
+	initDistris();
 
 	ud.f = newflinear(0, a, RAND_MAX - 1, b);
 
@@ -48,6 +62,8 @@ float nextUDistriRandom(UDistri ud) {
 ExDistri newExDistri(float mean) {
 
 	ExDistri ed;
+
+	initDistris();
 
 	ed.mean = mean;
 	ed.f = newflinear(0, 0, RAND_MAX - 1, 1);
@@ -68,6 +84,7 @@ PoDistri newPoDistri(float mean) {
 
 	PoDistri pd;
 
+	initDistris();
 	pd.mean = mean;
 	pd.f = newflinear(0, 0, RAND_MAX - 1, 1);
 
@@ -107,7 +124,7 @@ int nextPoDistriRandom(PoDistri pd) {
 		p = p * y(pd.f, rand());
 	} while (p > l);
 
-	return k-1;
+	return k - 1;
 
 }
 

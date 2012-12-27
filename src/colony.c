@@ -41,10 +41,11 @@ Colony newColony(PopType *pt, int initCount, int time) {
 
 	int i;
 	Animal r;
-	for (i = 1; i <= initCount; ++i) {
-		printf("%d ", i);
-		insertAnimal(nc->rabbitList, newAnimal(&r, pt, time - getLifeAge(pt)));
-	}
+	do {
+		if (insertAnimal(nc->rabbitList,
+				newAnimal(&r, pt, time - getLifeAge(pt))) != NULL )
+			i++;
+	} while (i < initCount);
 
 	nc->popType = pt;
 
