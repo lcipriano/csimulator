@@ -39,7 +39,7 @@ Colony newColony(PopType *pt, int initCount, int time) {
 		return NULL ;
 	}
 
-	int i;
+	int i = 0;
 	Animal r;
 	do {
 		if (insertAnimal(nc->rabbitList,
