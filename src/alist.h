@@ -9,7 +9,7 @@
 #define ALIST_H
 
 #include "animal.h"
-#include "lists.h"
+#include "list.h"
 
 typedef List AList;
 

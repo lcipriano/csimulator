@@ -14,8 +14,19 @@
 
 typedef struct list *List;
 
+/**
+ * creates a new list
+ *
+ * @param ds	size of the object to store in the list
+ * @return		a new list or NULL if can't allocate memory space for the list
+ */
 List newList(int ds);
 
+/**
+ * frees the memory allocated to the list
+ *
+ * @param l		a list variable
+ */
 void freeList(List l);
 
 void *getListAt(List l, void *data, int index);

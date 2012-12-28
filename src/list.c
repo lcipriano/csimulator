@@ -11,7 +11,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "lists.h"
+#include "list.h"
 
 typedef void *Container;
 
@@ -73,6 +73,22 @@ static Container newContainer(List l, void *d) {
 static void freeContainer(Container c) {
 
 	free(c);
+}
+
+static Container addList(List l, void *data) {
+
+	if (l == NULL || data == NULL )
+		return NULL ;
+
+	Container nc = newContainer(l, data);
+
+	if (nc == NULL )
+		return NULL ;
+
+	l->count++;
+
+	return nc;
+
 }
 
 struct listIter {
@@ -147,7 +163,14 @@ void *ListIterNext(ListIter li, void *data) {
 }
 
 int getListIterNextPos(ListIter li) {
-	return li == NULL ? -1 : li->pos;
+
+	if (li == NULL )
+		return -1;
+
+	if (li->next == NULL )
+		return -1;
+
+	return li->pos;
 }
 
 int getListIterLastPos(ListIter li) {
@@ -200,15 +223,11 @@ void freeList(List l) {
 
 void *addListHead(List l, void *data) {
 
-	if (l == NULL || data == NULL )
-		return NULL ;
-
-	Container nc = newContainer(l, data);
+	Container nc = addList(l, data);
+	newContainer(l, data);
 
 	if (nc == NULL )
 		return NULL ;
-
-	l->count++;
 
 	if (l->count == 1) {
 
@@ -225,15 +244,10 @@ void *addListHead(List l, void *data) {
 
 void *addListTail(List l, void *data) {
 
-	if (l == NULL || data == NULL )
-		return NULL ;
-
-	Container nc = newContainer(l, data);
+	Container nc = addList(l, data);
 
 	if (nc == NULL )
 		return NULL ;
-
-	l->count++;
 
 	if (l->count == 1) {
 
