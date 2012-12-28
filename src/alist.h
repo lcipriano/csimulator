@@ -9,8 +9,9 @@
 #define ALIST_H
 
 #include "animal.h"
+#include "lists.h"
 
-typedef struct aList *AList;
+typedef List AList;
 
 AList newAnimalList();
 
@@ -20,14 +21,18 @@ Animal *insertAnimal(AList rl, Animal *r);
 
 void insertNewAnimals(AList rl, int count, int birthTime, PopType *pt);
 
-void removeAnimal(AList rl, int index);
+Animal *removeAnimal(AList rl, Animal *a, int index);
 
 int getAnimalsCount(AList rl);
 
 int getAdultsCount(AList rl, int time);
 
-void deleteOldAnimals(AList rl, int timeLimit);
+AList deleteOldAnimals(AList rl, int timeLimit);
+
+int huntAnimal(AList al);
 
 void printfAnimalList(AList rl);
+
+AList trimAnimalList(AList al, int count);
 
 #endif /* ALIST_H */

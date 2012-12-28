@@ -45,8 +45,6 @@ typedef struct {
 PopType *newPopType(PopType *p, int sbt, int ebt, int at, int atl,
 		int abs, int akc);
 
-int getNextID(PopType *p);
-
 int getLifeAge(PopType *p);
 
 int getAdultAge(PopType *p);

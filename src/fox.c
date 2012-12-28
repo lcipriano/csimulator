@@ -27,6 +27,9 @@ Fox *newFox(Fox *nr, int birthTime) {
 	return newAnimal(nr, foxType, birthTime);
 }
 
+void eat(Fox *f, int nr) {
+}
+
 void printfFoxt(Fox *r) {
 
 	printf("Fox\n");

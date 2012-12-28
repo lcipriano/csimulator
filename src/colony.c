@@ -13,45 +13,66 @@
 struct colony {
 
 	/** repository for the Animals */
-	AList rabbitList;
+	AList animals;
+
+	/** max number of animal in the colony */
+	int max;
 
 	/** population type */
 	PopType *popType;
 };
 
 /**
- * Cria uma nova Colónia
  *
- * @param initCount número inicial de coelhos
- * @param time		tempo em que a Colónia é criada
- * @return			ponteiro para uma nova Colónia
+ * @param pt
+ * @return
  */
-Colony newColony(PopType *pt, int initCount, int time) {
+Colony newColony(PopType *pt) {
 
 	Colony nc = malloc(sizeof(struct colony));
 
 	if (nc == NULL )
 		return NULL ;
 
-	nc->rabbitList = newAnimalList();
-	if (nc->rabbitList == NULL ) {
+	nc->animals = newAnimalList();
+	if (nc->animals == NULL ) {
 		free(nc);
 		return NULL ;
 	}
 
+	nc->popType = pt;
+
+	return nc;
+}
+
+void initColony(Colony c, int count, int time) {
+
+	if (c == NULL )
+		return;
+
 	int i = 0;
 	Animal r;
 	do {
-		if (insertAnimal(nc->rabbitList,
-				newAnimal(&r, pt, time - getLifeAge(pt))) != NULL )
+		if (insertAnimal(c->animals,
+				newAnimal(&r, c->popType,
+						time - getLifeAge(c->popType))) != NULL)
 			i++;
-	} while (i < initCount);
+	} while (i < count);
+}
 
-	nc->popType = pt;
+void setAList(Colony c, AList al) {
 
-	printfAnimalList(nc->rabbitList);
+	if (c == NULL || al == NULL )
+		return;
 
-	return nc;
+	freeAnimalList(c->animals);
+
+	c->animals = al;
+
+}
+
+AList getAList(Colony c) {
+	return c == NULL ? NULL : c->animals;
 }
 
 void freeColony(Colony c) {
@@ -59,7 +80,7 @@ void freeColony(Colony c) {
 	if (c == NULL )
 		return;
 
-	freeAnimalList(c->rabbitList);
+	freeAnimalList(c->animals);
 
 	free(c);
 }
@@ -69,37 +90,36 @@ void updateColony(Colony c, int time) {
 	/* breed Animals */
 
 	/* calc number of couple Animals */
-	int nCouples = getAdultsCount(c->rabbitList, time) / 2;
+	int nCouples = getAdultsCount(c->animals, time) / 2;
 
 	/* number of breeds in this time/month */
 	int nBreeds = getBreeds(c->popType), i;
 	for (i = 1; i <= nBreeds; ++i)
-		insertNewAnimals(c->rabbitList, nCouples * getKits(c->popType), time,
+		insertNewAnimals(c->animals, nCouples * getKits(c->popType), time,
 				c->popType);
 
 	printf("nc = %d  nb = %d\n", nCouples, nBreeds);
 
-	deleteOldAnimals(c->rabbitList, time);
+	deleteOldAnimals(c->animals, time);
 
-}
-
-int huntAnimal(Colony c) {
-
-	if (c == NULL )
-		return 0;
-
-	int count = getAnimalsCount(c->rabbitList);
-	if (count == 0)
-		return 0;
-
-	/* generate a uniform distribution with the number of Animals */
-	UDistri d = newUDistri(1, count);
-
-	removeAnimal(c->rabbitList, nextUDistriRandom(d));
-
-	return 1;
 }
 
 void printfColony(Colony c) {
-	printfAnimalList(c->rabbitList);
+	printfAnimalList(c->animals);
+}
+
+Colony newColonyWithRabbits(AList rl) {
+	return NULL ;
+}
+
+void removeFromColony(Colony c, Animal *a, int index) {
+
+	if (c == NULL )
+		return;
+
+	removeAnimal(c->animals, a, index);
+}
+
+int getColonyCount(Colony c) {
+	return c == NULL ? -1 : getAnimalsCount(c->animals);
 }

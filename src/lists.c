@@ -200,8 +200,7 @@ void *getList(List l, void *data, int index) {
 	if (c == NULL )
 		return NULL ;
 
-	if (data != NULL )
-		setData(c, data, l->dsize);
+	getData(c, data, l->dsize);
 
 	return getDataPointer(c);
 

@@ -17,6 +17,8 @@ void initFoxs(PopType *pt);
 
 Fox *newFox(Fox *nr, int birthTime);
 
+void eatRabbits(Fox *f,int nr);
+
 void printfFox(Fox *r);
 
 #endif /* FOX_H_ */

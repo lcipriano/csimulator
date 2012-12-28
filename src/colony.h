@@ -13,11 +13,14 @@
 
 typedef struct colony *Colony;
 
-Colony newColony(PopType *pt, int initCount, int atTime);
+Colony newColony(PopType *pt);
+void initColony(Colony c, int count, int time);
+void setAList(Colony c, AList al);
+AList getAList(Colony c);
 void freeColony(Colony c);
-Colony newColonyWithRabbits(AList rl);
 void updateColony(Colony c, int time);
-int huntRabbit(Colony rl);
+int getColonyCount(Colony c);
 void printfColony(Colony c);
+void removeFromColony(Colony c, Animal *a, int index);
 
 #endif /* COLONY_H_ */

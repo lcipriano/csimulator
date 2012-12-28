@@ -15,51 +15,37 @@
 #include "lists.h"
 #include "date.h"
 
-struct aList {
-	List list;
-};
-
 /** */
 
 AList newAnimalList() {
 
-	AList al = malloc(sizeof(struct aList));
-
-	if (al == NULL )
-		return NULL ;
-
-	al->list = newList(sizeof(Animal));
-
-	return al;
+	return newList(sizeof(Animal));
 }
 
 void freeAnimalList(AList al) {
 
-	if (al != NULL ) {
-		freeList(al->list);
-		free(al);
-	}
+	freeList(al);
 }
 
 Animal *insertAnimal(AList al, Animal *pr) {
 
 	static int counter = 1;
 
-	if (al == NULL || pr == NULL )
-		return NULL ;
-
 	Animal *nr;
-	if ((nr = addListTail(al->list, pr)) != NULL )
+	if ((nr = addListTail(al, pr)) != NULL )
 		nr->id = counter++;
 	return nr;
+}
+
+Animal *getAnimal(AList al, Animal *a, int index) {
+
+	return getList(al, a, index);
+
 }
 
 void insertNewAnimals(AList al, int count, int birthTime, PopType *pt) {
 
 	int i;
-
-	if (al == NULL )
-		return;
 
 	Animal r;
 	for (i = 1; i <= count; ++i)
@@ -68,69 +54,58 @@ void insertNewAnimals(AList al, int count, int birthTime, PopType *pt) {
 
 int getAdultsCount(AList al, int time) {
 
-	if (al == NULL )
+	ListIter iter = newListIter(al);
+	if (iter == NULL )
 		return -1;
 
-	int count = 0;
-	ListIter iter = newListIter(al->list);
 	Animal *pr;
+	int count = 0;
 
-	if (iter != NULL ) {
-
-		while ((pr = ListIterNext(iter, NULL )) != NULL )
-			if (pr->adultTime <= time)
-				count++;
-
-		freeListIter(iter);
-	}
+	while ((pr = ListIterNext(iter, NULL )) != NULL )
+		if (time >= pr->adultTime)
+			count++;
+	freeListIter(iter);
 
 	return count;
 }
 
 int getAnimalsCount(AList al) {
 
-	return getListCount(al->list);
+	return getListCount(al);
 }
 
-void deleteOldAnimals(AList al, int timeLimit) {
+AList deleteOldAnimals(AList actual, int timeLimit) {
 
-	if (al == NULL )
-		return;
+	if (actual == NULL )
+		return NULL ;
 
-	List tmp = newList(sizeof(Animal));
+	List new = newList(sizeof(Animal));
+	if (new == NULL )
+		return NULL ;
 
-	if (tmp == NULL )
-		return;
-
-	ListIter iter = newListIter(al->list);
-
+	ListIter iter = newListIter(actual);
 	if (iter == NULL ) {
-		freeList(tmp);
-		return;
+		freeList(new);
+		return NULL ;
 	}
 
 	/* copy youngs to a tmp list */
 	Animal *pr;
 	while ((pr = ListIterNext(iter, NULL )) != NULL )
 		if (pr->deathTime > timeLimit)
-			addListTail(tmp, pr);
+			addListTail(new, pr);
 	freeListIter(iter);
 
 	/* free actual list */
-	freeList(al->list);
+	freeList(actual);
 
-	/* set the young list the actual Animal list */
-	al->list = tmp;
+	return new;
 
 }
 
 void printfAnimalList(AList al) {
 
-	if (al == NULL )
-		return;
-
-	ListIter iter = newListIter(al->list);
-
+	ListIter iter = newListIter(al);
 	if (iter == NULL )
 		return;
 
@@ -138,12 +113,44 @@ void printfAnimalList(AList al) {
 	while (ListIterNext(iter, &r) != NULL )
 		printfAnimal(&r);
 	freeListIter(iter);
-
 }
 
-void removeAnimal(AList al, int index) {
+Animal *removeAnimal(AList al, Animal *a, int index) {
 
-	Animal r;
+	return removeList(al, a, index);
+}
 
-	removeList(al->list, &r, index);
+Animal *removeRandAnimal(AList al, Animal *a) {
+
+	int count = getAnimalsCount(al);
+	if (count <= 0)
+		return NULL ;
+
+	/* generate a uniform distribution with the number of Animals */
+	UDistri d = newUDistri(1, count);
+
+	return removeAnimal(al, a, nextUDistriRandom(d));
+}
+
+AList trimAnimalList(AList al, int newCount) {
+
+	int actualCount = getListCount(al);
+	if (actualCount <= 0 || actualCount == newCount || 0 > newCount
+			|| newCount > actualCount)
+		return NULL ;
+
+	AList list = newAnimalList();
+	if (list == NULL )
+		return NULL ;
+
+	Animal a;
+	UDistri d;
+	int i;
+	for (i = newCount + 1; i <= actualCount; ++i) {
+		d = newUDistri(1, actualCount);
+		insertAnimal(list, removeRandAnimal(al,&a));
+		actualCount--;
+	}
+
+	return list;
 }
