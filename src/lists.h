@@ -1,46 +1,44 @@
 /*
- * LinkedList.h
+ * List.h
  *
  *  Created on: May 31, 2009
  *      Author: lcipriano
  */
 
-#ifndef LINKEDLIST_H_
-#define LINKEDLIST_H_
+#ifndef LIST_H_
+#define LIST_H_
 
 /*
- * LinkedList
+ * List
  */
 
-typedef struct linkedList *List;
+typedef struct list *List;
 
 List newList(int ds);
 
-void freeList(List theList);
+void freeList(List l);
 
-void *addList(List theList, void *data, int index);
+void *getListAt(List l, void *data, int index);
 
-void *getList(List theList, void *data, int index);
+void *removeListAt(List l, void *data, int index);
 
-void *removeList(List theList, void *data, int index);
+void *addListTail(List l, void *data);
 
-void *addListTail(List theList, void *data);
-
-void *addListHead(List theList, void *data);
+void *addListHead(List l, void *data);
 
 void *removeListHead(List l, void *data);
 
 void *removeListTail(List l, void *data);
 
-int getListCount(List theList);
+int getListCount(List l);
 
-void clearList(List theList);
+void clearList(List l);
 
 /*
- * Iterator
+ * List Iterator
  */
 
-typedef struct listIterator *ListIter;
+typedef struct listIter *ListIter;
 
 ListIter newListIter(List l);
 
@@ -48,6 +46,8 @@ void freeListIter(ListIter li);
 
 void *ListIterNext(ListIter li, void *data);
 
-int getListIterPos(ListIter li);
+int getListIterNextPos(ListIter li);
 
-#endif /* LINKEDLIST_H_ */
+int getListIterLastPos(ListIter li);
+
+#endif /* LIST_H_ */

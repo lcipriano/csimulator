@@ -39,7 +39,7 @@ Animal *insertAnimal(AList al, Animal *pr) {
 
 Animal *getAnimal(AList al, Animal *a, int index) {
 
-	return getList(al, a, index);
+	return getListAt(al, a, index);
 
 }
 
@@ -117,7 +117,7 @@ void printfAnimalList(AList al) {
 
 Animal *removeAnimal(AList al, Animal *a, int index) {
 
-	return removeList(al, a, index);
+	return removeListAt(al, a, index);
 }
 
 Animal *removeRandAnimal(AList al, Animal *a) {
@@ -144,11 +144,9 @@ AList trimAnimalList(AList al, int newCount) {
 		return NULL ;
 
 	Animal a;
-	UDistri d;
 	int i;
 	for (i = newCount + 1; i <= actualCount; ++i) {
-		d = newUDistri(1, actualCount);
-		insertAnimal(list, removeRandAnimal(al,&a));
+		insertAnimal(list, removeRandAnimal(al, &a));
 		actualCount--;
 	}
 

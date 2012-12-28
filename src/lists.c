@@ -1,14 +1,13 @@
 /*
  ============================================================================
- Name        : LinkedList.c
+ Name        : List.c
  Author      : Lívio Cipriano
- Version     : 1.0
- Copyright   : Your copyright notice
+ Version     : 1.3 201212
+ Copyright   :
  Description :
  ============================================================================
  */
 
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -16,16 +15,10 @@
 
 typedef void *Container;
 
-struct linkedList {
-
-	Container head, tail;
-	int count, dsize;
-
-};
-
-struct listIterator {
-	Container next;
-	int pos;
+struct list {
+	Container head;
+	Container tail;
+	int count;
 	int dsize;
 };
 
@@ -44,20 +37,24 @@ static void setNext(Container c, Container n) {
 }
 
 static void *getDataPointer(Container c) {
+
 	return (Container *) c + 1;
+
 }
 
-static void getData(Container c, void *d, int ds) {
+static void *getData(Container c, void *d, int ds) {
 
-	if (d == NULL )
-		return;
+	void *p = getDataPointer(c);
 
-	memmove(d, getDataPointer(c), ds);
+	memmove(d, p, ds);
+
+	return p;
 }
 
 static void setData(Container c, void *d, int ds) {
 
 	memmove(getDataPointer(c), d, ds);
+
 }
 
 static Container newContainer(List l, void *d) {
@@ -75,48 +72,36 @@ static Container newContainer(List l, void *d) {
 
 static void freeContainer(Container c) {
 
-	if (c != NULL )
-		free(c);
+	free(c);
 }
 
-List newList(int ds) {
+struct listIter {
+	Container next;
+	int pos;
+	int dsize;
+};
 
-	List l = malloc(sizeof(struct linkedList));
+static Container *nextContainer(ListIter li) {
 
-	if (l != NULL ) {
-		l->head = NULL;
-		l->tail = NULL;
-		l->dsize = ds;
-		l->count = 0;
-	}
+	if (li->next == NULL )
+		return NULL ;
 
-	return l;
+	Container tmp = li->next;
+	li->next = getNext(li->next);
+	li->pos++;
 
+	return tmp;
 }
 
-void clearList(List theList) {
+static Container getContainerAt(List l, int index) {
 
-	if (theList == NULL )
-		return;
+	int i;
+	Container c = l->head;
 
-	Container actual = theList->head, next;
-	while (actual != NULL ) {
-		next = getNext(actual);
-		freeContainer(actual);
-		actual = next;
-	}
+	for (i = 1; i < index; ++i)
+		c = getNext(c);
 
-}
-
-void freeList(List theList) {
-
-	if (theList == NULL )
-		return;
-
-	clearList(theList);
-
-	free(theList);
-
+	return c;
 }
 
 ListIter newListIter(List l) {
@@ -127,7 +112,7 @@ ListIter newListIter(List l) {
 	if (l->head == NULL )
 		return NULL ;
 
-	ListIter li = malloc(sizeof(struct listIterator));
+	ListIter li = malloc(sizeof(struct listIter));
 
 	if (li != NULL ) {
 		li->next = l->head;
@@ -144,151 +129,73 @@ void freeListIter(ListIter li) {
 		free(li);
 }
 
-static Container *nextContainer(ListIter li) {
-
-	if (li->next == NULL )
-		return NULL ;
-
-	Container tmp = li->next;
-	li->next = getNext(li->next);
-	li->pos++;
-
-	return tmp;
-}
-
-static Container getContainer(List l, int index) {
-
-	if (l == NULL || index < 1)
-		return NULL ;
-
-	if (index > l->count)
-		return NULL ;
-
-	ListIter li = newListIter(l);
+void *ListIterNext(ListIter li, void *data) {
 
 	if (li == NULL )
 		return NULL ;
-
-	int i;
-	Container c;
-
-	for (i = 1; i <= index; i++)
-		c = nextContainer(li);
-
-	freeListIter(li);
-
-	return c;
-}
-
-void *ListIterNext(ListIter li, void *data) {
 
 	Container c = nextContainer(li);
 
 	if (c == NULL )
 		return NULL ;
 
-	getData(c, data, li->dsize);
+	if (data != NULL )
+		return getData(c, data, li->dsize);
 
 	return getDataPointer(c);
 
 }
 
-void *getList(List l, void *data, int index) {
-
-	Container c = getContainer(l, index);
-
-	if (c == NULL )
-		return NULL ;
-
-	getData(c, data, l->dsize);
-
-	return getDataPointer(c);
-
+int getListIterNextPos(ListIter li) {
+	return li == NULL ? -1 : li->pos;
 }
 
-void *removeListHead(List l, void *data) {
-
-	if (l == NULL || data == NULL )
-		return NULL ;
-
-	if (l->count == 0)
-		return NULL ;
-
-	getData(l->head, data, l->dsize);
-
-	Container tmp = l->head;
-
-	l->head = getNext(l->head);
-
-	freeContainer(tmp);
-
-	l->count--;
-
-	return data;
+int getListIterLastPos(ListIter li) {
+	return li == NULL ? -1 : li->pos - 1;
 }
 
-void *removeList(List l, void *data, int index) {
+static void initList(List l) {
 
-	if (l == NULL || data == NULL || index < 1)
-		return NULL ;
-
-	if (index > l->count)
-		return NULL ;
-
-	if (index == 1)
-		return removeListHead(l, data);
-
-	Container previousIndexContainer = getContainer(l, index - 1);
-
-	if (previousIndexContainer == NULL )
-		return NULL ;
-
-	Container indexContainer = getNext(previousIndexContainer);
-
-	if (indexContainer == NULL )
-		return NULL ;
-
-	Container nextIndexContainer = getNext(indexContainer);
-
-	getData(indexContainer, data, l->dsize);
-
-	freeContainer(indexContainer);
-
-	setNext(previousIndexContainer, nextIndexContainer);
-
-	l->count--;
-
-	return data;
-
+	l->head = NULL;
+	l->tail = NULL;
+	l->count = 0;
 }
 
-void *removeListTail(List l, void *data) {
-	return removeList(l, data, getListCount(l));
-}
+List newList(int ds) {
 
-void *addListTail(List l, void *data) {
+	List l = malloc(sizeof(struct list));
 
-	if (l == NULL || data == NULL )
-		return NULL ;
-
-	Container nc = newContainer(l, data);
-
-	if (nc == NULL )
-		return NULL ;
-
-	l->count++;
-
-	if (l->count == 1) {
-
-		l->head = l->tail = nc;
-
-	} else {
-
-		setNext(l->tail, nc);
-		l->tail = nc;
+	if (l != NULL ) {
+		initList(l);
+		l->dsize = ds;
 	}
 
-	return getDataPointer(nc);
+	return l;
+
+}
+
+void clearList(List l) {
+
+	if (l == NULL )
+		return;
+
+	Container actual = l->head, next;
+	while (actual != NULL ) {
+		next = getNext(actual);
+		freeContainer(actual);
+		actual = next;
+	}
+
+	initList(l);
+
+}
+
+void freeList(List l) {
+
+	clearList(l);
+
+	free(l);
+
 }
 
 void *addListHead(List l, void *data) {
@@ -316,12 +223,111 @@ void *addListHead(List l, void *data) {
 	return getDataPointer(nc);
 }
 
+void *addListTail(List l, void *data) {
+
+	if (l == NULL || data == NULL )
+		return NULL ;
+
+	Container nc = newContainer(l, data);
+
+	if (nc == NULL )
+		return NULL ;
+
+	l->count++;
+
+	if (l->count == 1) {
+
+		l->head = l->tail = nc;
+
+	} else {
+
+		setNext(l->tail, nc);
+		l->tail = nc;
+	}
+
+	return getDataPointer(nc);
+}
+
+void *removeListHead(List l, void *data) {
+
+	if (l == NULL || data == NULL )
+		return NULL ;
+
+	if (l->count == 0)
+		return NULL ;
+
+	getData(l->head, data, l->dsize);
+
+	Container tmp = l->head;
+
+	l->head = getNext(l->head);
+
+	freeContainer(tmp);
+
+	l->count--;
+
+	return data;
+}
+
+void *removeListAt(List l, void *data, int index) {
+
+	if (l == NULL || data == NULL || index < 1)
+		return NULL ;
+
+	if (index > l->count)
+		return NULL ;
+
+	if (index == 1)
+		return removeListHead(l, data);
+
+	/* index between 2 and count  */
+
+	Container previousIndexContainer = getContainerAt(l, index - 1);
+
+	Container indexContainer = getNext(previousIndexContainer);
+
+	Container nextIndexContainer = getNext(indexContainer);
+
+	getData(indexContainer, data, l->dsize);
+
+	freeContainer(indexContainer);
+
+	setNext(previousIndexContainer, nextIndexContainer);
+
+	if (index == l->count)
+		l->tail = previousIndexContainer;
+
+	l->count--;
+
+	return data;
+
+}
+
+void *getListAt(List l, void *data, int index) {
+
+	if (l == NULL || index < 1)
+		return NULL ;
+
+	if (index > l->count)
+		return NULL ;
+
+	Container c = getContainerAt(l, index);
+
+	if (data != NULL )
+		return getData(c, data, l->dsize);
+
+	return getDataPointer(c);
+
+}
+
 int getListCount(List l) {
 
 	return l == NULL ? -1 : l->count;
 
 }
 
-int getListIterPos(ListIter li) {
-	return li == NULL ? -1 : li->pos;
+void *removeListTail(List l, void *data) {
+
+	return removeListAt(l, data, getListCount(l));
 }
+

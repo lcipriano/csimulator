@@ -23,13 +23,13 @@ void insertNewAnimals(AList rl, int count, int birthTime, PopType *pt);
 
 Animal *removeAnimal(AList rl, Animal *a, int index);
 
+Animal *removeRandAnimal(AList al, Animal *a);
+
 int getAnimalsCount(AList rl);
 
 int getAdultsCount(AList rl, int time);
 
 AList deleteOldAnimals(AList rl, int timeLimit);
-
-int huntAnimal(AList al);
 
 void printfAnimalList(AList rl);
 
