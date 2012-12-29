@@ -44,7 +44,7 @@ AList updateZone(Zone z, int time) {
 	UDistri d;
 	while (count > z->max) {
 		d = newUDistri(1, count);
-		removeFromColony(z->c, &a, nextUDistriRandom(d));
+		/*removeFromColony(z->c, &a, nextUDistriRandom(d)); */
 		insertAnimal(list, &a);
 		count--;
 	}

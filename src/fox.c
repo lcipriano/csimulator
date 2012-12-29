@@ -5,34 +5,11 @@
  *      Author: lcipriano
  */
 
-#include <stdlib.h>
-#include <string.h>
-#include <stdio.h>
-#include <math.h>
-
 #include "fox.h"
-#include "smath.h"
-#include "date.h"
-#include "area.h"
 
-static PopType *foxType;
+int getFoxID(void) {
 
-void initFoxs(PopType *pt) {
+	static int id = 1;
 
-	foxType = pt;
-}
-
-Fox *newFox(Fox *nr, int birthTime) {
-
-	return newAnimal(nr, foxType, birthTime);
-}
-
-void eat(Fox *f, int nr) {
-}
-
-void printfFoxt(Fox *r) {
-
-	printf("Fox\n");
-
-	printfAnimal(r);
+	return id++;
 }

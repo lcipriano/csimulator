@@ -22,8 +22,8 @@ typedef struct {
 
 static Area area;
 
-void setArea(float x1, float y1, float x2, float y2, int nx, int ny, PopType f,
-		PopType r) {
+void setArea(float x1, float y1, float x2, float y2, int nx, int ny,
+		Population f, Population r) {
 
 	area.xb = x1;
 	area.yb = y1;
@@ -94,7 +94,7 @@ void updateArea(int time) {
 			if (newRabbitList != NULL ) {
 				destZone = nextFreeZone(j, i);
 				/* if found creat a new colony in zone */
-				setZoneColony(destZone, newColonyWithRabbits(newRabbitList));
+
 			}
 		}
 	}

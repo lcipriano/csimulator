@@ -1,30 +1,15 @@
 /*
- * rabbits.c
+ * rabbit.c
  *
- *  Created on: Dec 18, 2012
+ *  Created on: Dec 25, 2012
  *      Author: lcipriano
  */
 
-#include <stdio.h>
-
 #include "rabbit.h"
 
-/** */
-static PopType *rabbitType;
+int getRabbitID(void) {
 
-void initRabbits(PopType *pt) {
+	static int id = 1;
 
-	rabbitType = pt;
-}
-
-Rabbit *newRabbit(Rabbit *nr, int birthTime) {
-
-	return newAnimal(nr, rabbitType, birthTime);
-}
-
-void printfRabbit(Rabbit *r) {
-
-	printf("Rabbit\n");
-
-	printfAnimal(r);
+	return id++;
 }

@@ -7,13 +7,14 @@
 
 #include <stdlib.h>
 
-#include "poptype.h"
+#include "population.h"
+#include "math.h"
 
-PopType *newPopType(PopType *p, int sbt, int ebt, int at, int atl, int abs,
-		int akc) {
+Population *newPopulation(Population *p, int sbt, int ebt, int at, int atl,
+		int abs, int akc) {
 
 	if (p == NULL )
-		p = malloc(sizeof(PopType));
+		p = malloc(sizeof(Population));
 
 	if (p == NULL )
 		return NULL ;
@@ -49,31 +50,25 @@ PopType *newPopType(PopType *p, int sbt, int ebt, int at, int atl, int abs,
 
 }
 
-int getStartBreedTime(PopType *p) {
-	return p != NULL ? p->startBreedTime : -1;
+int getLifeAge(Population *p) {
+	return p != NULL ?
+			(int) floor(0.5 + nextUDistriRandom(p->timeLifeDistri)) : -1;
 }
 
-int getEndBreedTime(PopType *p) {
-	return p != NULL ? p->endBreedTime : -1;
-}
-
-int getLifeAge(PopType *p) {
-	return p != NULL ? nextUDistriRandom(p->timeLifeDistri) : -1;
-}
-
-int getAdultAge(PopType *p) {
+int getAdultAge(Population *p) {
 	return p != NULL ? p->adultAge : -1;
 }
 
-int getBreeds(PopType *p) {
-	return p != NULL ? nextPoDistriRandom(p->breedsDistri) : -1;
+int getBreeds(Population *p) {
+	return p != NULL ?
+			(int) floor(0.5 + nextPoDistriRandom(p->breedsDistri)) : -1;
 }
 
-int getKits(PopType *p) {
-	return p != NULL ? nextPoDistriRandom(p->kitsDistri) : -1;
+int getKits(Population *p) {
+	return p != NULL ? (int) floor(0.5 + nextPoDistriRandom(p->kitsDistri)) : -1;
 }
 
-int isBreedSeason(PopType *p, int time) {
+int isBreedSeason(Population *p, int time) {
 
 	if (p == NULL )
 		return 0;

@@ -8,7 +8,6 @@
 #ifndef POPTYPE_H_
 #define POPTYPE_H_
 
-#include "date.h"
 #include "smath.h"
 
 typedef struct {
@@ -40,19 +39,19 @@ typedef struct {
 	/** gerador aleatório de crias por casal */
 	PoDistri kitsDistri;
 
-} PopType;
+} Population;
 
-PopType *newPopType(PopType *p, int sbt, int ebt, int at, int atl,
-		int abs, int akc);
+Population *newPopulation(Population *p, int sbt, int ebt, int at, int atl, int abs,
+		int akc);
 
-int getLifeAge(PopType *p);
+int getLifeAge(Population *p);
 
-int getAdultAge(PopType *p);
+int getAdultAge(Population *p);
 
-int getBreeds(PopType *p);
+int getBreeds(Population *p);
 
-int getKits(PopType *p);
+int getKits(Population *p);
 
-int isBreedSeason(PopType *p, int time);
+int isBreedSeason(Population *p, int time);
 
 #endif /* POPTYPE_H_ */

@@ -8,17 +8,6 @@
 #ifndef FOX_H_
 #define FOX_H_
 
-#include "animal.h"
-#include "poptype.h"
-
-typedef Animal Fox;
-
-void initFoxs(PopType *pt);
-
-Fox *newFox(Fox *nr, int birthTime);
-
-void eatRabbits(Fox *f,int nr);
-
-void printfFox(Fox *r);
+int getFoxID(void);
 
 #endif /* FOX_H_ */

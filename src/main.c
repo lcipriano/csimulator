@@ -11,60 +11,62 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "list.h"
+#include "colony.h"
+#include "fox.h"
+#include "rabbit.h"
 
 int main(void) {
 
-	int i, a, b, c;
-	int max = 100;
+	/* RABBITS */
 
-	List listH = newList(sizeof(int));
-	List listT = newList(sizeof(int));
+	/** início da temporada de gestação */
+	int rstartBreedTime = 1;
+	/** fim da temporada de gestação */
+	int rendBreedTime = 8;
+	/** idade adulta */
+	int radultAge = 3;
+	/** tempo médio de vida */
+	int ravgTimeAge = 24;
+	/** número médio de ninhadas por temporada */
+	int ravgBreedsBySeason = 9;
+	/** numero médio de crias por casal */
+	int ravgKitsByCouple = 5;
 
-	for (i = 0; i < max; ++i) {
+	/* FOXS */
 
-		addListTail(listH, &i);
+	/** início da temporada de gestação */
+	int fstartBreedTime = 4;
+	/** fim da temporada de gestação */
+	int fendBreedTime = 4;
+	/** idade adulta */
+	int fadultAge = 10;
+	/** tempo médio de vida */
+	int favgTimeAge = 60;
+	/** número médio de ninhadas por temporada */
+	int favgBreedsBySeason = 1;
+	/** numero médio de crias por casal */
+	int favgKitsByCouple = 2;
 
-		addListTail(listT, &i);
+	Population rabbits, foxs;
 
-		printf("%d %d\n", getListCount(listH), getListCount(listT));
+	newPopulation(&rabbits, rstartBreedTime, rendBreedTime, radultAge,
+			ravgTimeAge, ravgBreedsBySeason, ravgKitsByCouple);
 
+	newPopulation(&foxs, fstartBreedTime, fendBreedTime, fadultAge, favgTimeAge,
+			favgBreedsBySeason, favgKitsByCouple);
+
+	Colony r = newColony(&rabbits);
+	initColony(r, 20, 0, getRabbitID);
+	printfColony(r);
+
+	int i, max = 1;
+	for (i = 0; i <= max; ++i) {
+		updateColony(r, i);
+		printf("time : %d\n", i);
+		printfColony(r);
 	}
 
-	for (i = 0; i < max; ++i) {
-
-		removeListHead(listH, &a);
-
-		removeListTail(listH, &b);
-
-		removeListAt(listH, &c, getListCount(listH) / 2);
-
-		printf("%d %d %d %d\n", a, b, c, getListCount(listH));
-
-	}
-
-	ListIter iter = newListIter(listT);
-	int *p;
-
-	while ((p = ListIterNext(iter, &a)) != NULL ) {
-		printf("iter %d %d %d %d\n", a, *p, getListIterNextPos(iter),
-				getListIterLastPos(iter));
-	}
-
-	/*for (i = 0; i < max + 10; ++i) {
-
-	 removeListTail(listH, &a);
-
-	 removeListHead(listT, &b);
-
-	 printf("remove %d %d %d %d\n", a, b, getListCount(listH),
-	 getListCount(listT));
-	 a = b = i;
-
-	 }*/
-
-	freeList(listH);
-	freeList(listT);
+	freeColony(r);
 
 	exit(0);
 }

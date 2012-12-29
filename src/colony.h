@@ -9,18 +9,24 @@
 #define COLONY_H_
 
 #include "alist.h"
-#include "poptype.h"
+#include "population.h"
 
 typedef struct colony *Colony;
 
-Colony newColony(PopType *pt);
-void initColony(Colony c, int count, int time);
-void setAList(Colony c, AList al);
-AList getAList(Colony c);
+Colony newColony(Population *pt);
+
 void freeColony(Colony c);
+
+void initColony(Colony c, int count, int time, int (*idGenerator)(void));
+
+void setAList(Colony c, AList al);
+
+AList getAList(Colony c);
+
 void updateColony(Colony c, int time);
+
 int getColonyCount(Colony c);
+
 void printfColony(Colony c);
-void removeFromColony(Colony c, Animal *a, int index);
 
 #endif /* COLONY_H_ */

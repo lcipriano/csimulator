@@ -12,9 +12,6 @@
 
 #include "alist.h"
 #include "smath.h"
-#include "date.h"
-
-/** */
 
 AList newAnimalList() {
 
@@ -28,27 +25,13 @@ void freeAnimalList(AList al) {
 
 Animal *insertAnimal(AList al, Animal *pr) {
 
-	static int counter = 1;
-
-	Animal *nr;
-	if ((nr = addListTail(al, pr)) != NULL )
-		nr->id = counter++;
-	return nr;
+	return addListTail(al, pr);
 }
 
 Animal *getAnimal(AList al, Animal *a, int index) {
 
 	return getListAt(al, a, index);
 
-}
-
-void insertNewAnimals(AList al, int count, int birthTime, PopType *pt) {
-
-	int i;
-
-	Animal r;
-	for (i = 1; i <= count; ++i)
-		insertAnimal(al, newAnimal(&r, pt, birthTime));
 }
 
 int getAdultsCount(AList al, int time) {
@@ -73,12 +56,12 @@ int getAnimalsCount(AList al) {
 	return getListCount(al);
 }
 
-AList deleteOldAnimals(AList actual, int timeLimit) {
+AList removeOldAnimals(AList actual, int timeLimit) {
 
 	if (actual == NULL )
 		return NULL ;
 
-	List new = newList(sizeof(Animal));
+	AList new = newAnimalList();
 	if (new == NULL )
 		return NULL ;
 
@@ -90,9 +73,12 @@ AList deleteOldAnimals(AList actual, int timeLimit) {
 
 	/* copy youngs to a tmp list */
 	Animal *pr;
-	while ((pr = ListIterNext(iter, NULL )) != NULL )
+	while ((pr = ListIterNext(iter, NULL )) != NULL ) {
+		/*printf("death\n");
+		 printfAnimal(pr);*/
 		if (pr->deathTime > timeLimit)
-			addListTail(new, pr);
+			insertAnimal(new, pr);
+	}
 	freeListIter(iter);
 
 	/* free actual list */
@@ -122,6 +108,7 @@ Animal *removeAnimal(AList al, Animal *a, int index) {
 Animal *removeRandAnimal(AList al, Animal *a) {
 
 	int count = getAnimalsCount(al);
+
 	if (count <= 0)
 		return NULL ;
 
@@ -134,8 +121,10 @@ Animal *removeRandAnimal(AList al, Animal *a) {
 AList trimAnimalList(AList al, int newCount) {
 
 	int actualCount = getListCount(al);
-	if (actualCount <= 0 || actualCount == newCount || 0 > newCount
-			|| newCount > actualCount)
+
+	/* !(1<= newCount < actualCount) */
+
+	if (!(1 <= newCount && newCount < actualCount))
 		return NULL ;
 
 	AList list = newAnimalList();
