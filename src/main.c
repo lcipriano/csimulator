@@ -14,59 +14,25 @@
 #include "colony.h"
 #include "fox.h"
 #include "rabbit.h"
+#include "area.h"
 
 int main(void) {
 
-	/* RABBITS */
+	/* area const */
+	float x1 = 0.0;
+	float y1 = 0.0;
+	float x2 = 1000.0;
+	float y2 = 1000.0;
+	int nx = 3;
+	int ny = 3;
 
-	/** início da temporada de gestação */
-	int rstartBreedTime = 1;
-	/** fim da temporada de gestação */
-	int rendBreedTime = 8;
-	/** idade adulta */
-	int radultAge = 3;
-	/** tempo médio de vida */
-	int ravgTimeAge = 24;
-	/** número médio de ninhadas por temporada */
-	int ravgBreedsBySeason = 9;
-	/** numero médio de crias por casal */
-	int ravgKitsByCouple = 5;
+	setArea(x1, y1, x2, y2, nx, ny, getFoxPop(), getRabbitPop());
+	printfArea();
 
-	/* FOXS */
+	updateArea(1);
+	printfArea();
 
-	/** início da temporada de gestação */
-	int fstartBreedTime = 4;
-	/** fim da temporada de gestação */
-	int fendBreedTime = 4;
-	/** idade adulta */
-	int fadultAge = 10;
-	/** tempo médio de vida */
-	int favgTimeAge = 60;
-	/** número médio de ninhadas por temporada */
-	int favgBreedsBySeason = 1;
-	/** numero médio de crias por casal */
-	int favgKitsByCouple = 2;
-
-	Population rabbits, foxs;
-
-	newPopulation(&rabbits, rstartBreedTime, rendBreedTime, radultAge,
-			ravgTimeAge, ravgBreedsBySeason, ravgKitsByCouple);
-
-	newPopulation(&foxs, fstartBreedTime, fendBreedTime, fadultAge, favgTimeAge,
-			favgBreedsBySeason, favgKitsByCouple);
-
-	Colony r = newColony(&rabbits);
-	initColony(r, 20, 0, getRabbitID);
-	printfColony(r);
-
-	int i, max = 1;
-	for (i = 0; i <= max; ++i) {
-		updateColony(r, i);
-		printf("time : %d\n", i);
-		printfColony(r);
-	}
-
-	freeColony(r);
+	freeArea();
 
 	exit(0);
 }

@@ -103,7 +103,7 @@ void initColony(Colony c, int count, int time, int (*idGenerator)(void)) {
 	} while (i < count);
 }
 
-void setAList(Colony c, AList al) {
+void setColonyAnimals(Colony c, AList al) {
 
 	if (c == NULL || al == NULL )
 		return;
@@ -112,10 +112,6 @@ void setAList(Colony c, AList al) {
 
 	c->animals = al;
 
-}
-
-AList getAList(Colony c) {
-	return c == NULL ? NULL : c->animals;
 }
 
 void freeColony(Colony c) {
@@ -159,10 +155,15 @@ void updateColony(Colony c, int time) {
 }
 
 void printfColony(Colony c) {
-	printf("colony count %d = \n", getAnimalsCount(c->animals));
+
 	printfAnimalList(c->animals);
 }
 
 int getColonyCount(Colony c) {
 	return c == NULL ? -1 : getAnimalsCount(c->animals);
+}
+
+AList trimColony(Colony c, int newCount) {
+
+	return c == NULL ? NULL : trimAnimalList(c->animals, newCount);
 }

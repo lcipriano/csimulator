@@ -19,13 +19,13 @@ void freeColony(Colony c);
 
 void initColony(Colony c, int count, int time, int (*idGenerator)(void));
 
-void setAList(Colony c, AList al);
-
-AList getAList(Colony c);
+void setColonyAnimals(Colony c, AList al);
 
 void updateColony(Colony c, int time);
 
 int getColonyCount(Colony c);
+
+AList trimColony(Colony c, int newCount);
 
 void printfColony(Colony c);
 

@@ -71,7 +71,7 @@ AList removeOldAnimals(AList actual, int timeLimit) {
 		return NULL ;
 	}
 
-	/* copy youngs to a tmp list */
+	/* copy youngs to a new list */
 	Animal *pr;
 	while ((pr = ListIterNext(iter, NULL )) != NULL ) {
 		/*printf("death\n");
@@ -93,6 +93,8 @@ void printfAnimalList(AList al) {
 	ListIter iter = newListIter(al);
 	if (iter == NULL )
 		return;
+
+	printf("AList Total = %d\n", getAnimalsCount(al));
 
 	Animal r;
 	while (ListIterNext(iter, &r) != NULL )
@@ -133,10 +135,8 @@ AList trimAnimalList(AList al, int newCount) {
 
 	Animal a;
 	int i;
-	for (i = newCount + 1; i <= actualCount; ++i) {
+	for (i = newCount + 1; i <= actualCount; ++i)
 		insertAnimal(list, removeRandAnimal(al, &a));
-		actualCount--;
-	}
 
 	return list;
 }

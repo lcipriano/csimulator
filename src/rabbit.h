@@ -8,6 +8,10 @@
 #ifndef RABBIT_H_
 #define RABBIT_H_
 
+#include "population.h"
+
 int getRabbitID(void);
+
+Population *getRabbitPop();
 
 #endif /* RABBIT_H_ */

@@ -11,6 +11,7 @@
 #include "smath.h"
 #include "alist.h"
 #include "zone.h"
+#include "rabbit.h"
 
 typedef struct {
 	float xb, yb, tx, ty;
@@ -22,8 +23,21 @@ typedef struct {
 
 static Area area;
 
+static void setAreaZones() {
+
+	int i, j;
+
+	area.zones = calloc(area.ny, sizeof(Zone));
+	for (i = 0; i < area.ny; ++i)
+		area.zones[i] = calloc(area.nx, sizeof(Zone));
+
+	for (i = 0; i < area.ny; ++i)
+		for (j = 0; j < area.nx; ++j)
+			area.zones[i][j] = newZone(i, j);
+}
+
 void setArea(float x1, float y1, float x2, float y2, int nx, int ny,
-		Population f, Population r) {
+		Population *f, Population *r) {
 
 	area.xb = x1;
 	area.yb = y1;
@@ -35,15 +49,38 @@ void setArea(float x1, float y1, float x2, float y2, int nx, int ny,
 	area.XDistri = newUDistri(x1, x2);
 	area.YDistri = newUDistri(y1, y2);
 
-	area.foxs = newColony(&f);
+	area.foxs = newColony(f);
 
-	int i;
-	area.zones = calloc(ny, sizeof(Zone));
-	for (i = 0; i < nx; ++i)
-		area.zones[i] = calloc(nx, sizeof(Zone));
+	setAreaZones();
+
+	Colony c = newColony(r);
+	initColony(c, 20, 0, getRabbitID);
+	setZoneColony(area.zones[nx/2][ny/2], c);
+
 }
 
-void getRandomCoords(float *x, float *y) {
+static void freeAreaZones() {
+
+	int i, j;
+
+	for (i = 0; i < area.ny; ++i)
+		for (j = 0; j < area.nx; ++j)
+			freeZone(area.zones[i][j]);
+
+	for (i = 0; i < area.ny; ++i)
+		free(area.zones[i]);
+
+	free(area.zones);
+
+}
+
+void freeArea() {
+
+	freeColony(area.foxs);
+	freeAreaZones();
+}
+
+void getAreaRandomCoords(float *x, float *y) {
 
 	*x = nextUDistriRandom(area.XDistri);
 	*y = nextUDistriRandom(area.YDistri);
@@ -75,7 +112,7 @@ static Zone nextFreeZone(int x0, int y0) {
 	return NULL ;
 }
 
-void updateArea(int time) {
+static void updateZones(int time) {
 
 	int i, j;
 	AList newRabbitList;
@@ -90,18 +127,58 @@ void updateArea(int time) {
 			newRabbitList = updateZone(area.zones[i][j], time);
 
 			/* if rabbit pop of the zone more then 20 move excess to new zone */
-			/* PUT A WHILE HERE IF LIST BIGGET THEN 20 */
-			if (newRabbitList != NULL ) {
-				destZone = nextFreeZone(j, i);
-				/* if found creat a new colony in zone */
+			while (newRabbitList != NULL ) {
 
-			}
-		}
-	}
+				destZone = nextFreeZone(j, i);
+
+				/* if found an empty zone creat a new colony */
+				if (destZone != NULL ) {
+
+					Colony nc = newColony(getRabbitPop());
+					setColonyAnimals(nc, newRabbitList);
+					setZoneColony(destZone, nc);
+
+					/* trim the new Colony */
+					newRabbitList = trimColony(nc, getZoneMax(destZone));
+
+				} else {
+
+					/* no empty zone destroy  list */
+					freeAnimalList(newRabbitList);
+					newRabbitList = NULL;
+				}
+
+			} /* while (newRabbitList != NULL ) */
+		} /* for j */
+	} /* for i */
+
+}
+
+static void updateFoxes(int time) {
 
 	/* update the foxs */
 	updateColony(area.foxs, time);
+}
+
+static void huntRabbbit() {
+}
+
+void updateArea(int time) {
+
+	updateZones(time);
+
+	/*updateFoxes(time);*/
 
 	/* foxes are hunting */
+
+}
+
+void printfArea() {
+
+	int i, j;
+
+	for (i = 0; i < area.ny; ++i)
+		for (j = 0; j < area.nx; ++j)
+			printfZone(area.zones[i][j]);
 
 }

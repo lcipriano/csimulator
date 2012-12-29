@@ -12,7 +12,9 @@
 
 typedef struct zone *Zone;
 
-Zone newZone();
+Zone newZone(int x, int y);
+
+void freeZone(Zone z);
 
 AList updateZone(Zone z, int time);
 
@@ -20,6 +22,10 @@ Colony getZoneColony(Zone z);
 
 void setZoneColony(Zone z, Colony c);
 
+int getZoneMax(Zone z);
+
 int huntRabbit(Zone z);
+
+void printfZone(Zone z);
 
 #endif /* ZONE_H_ */

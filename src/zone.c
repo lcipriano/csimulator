@@ -5,7 +5,8 @@
  *      Author: lcipriano
  */
 
-#include <stddef.h>
+#include <stdlib.h>
+#include <stdio.h>
 
 #include "colony.h"
 #include "zone.h"
@@ -17,7 +18,35 @@ struct zone {
 
 	int max;
 
+	float x0, y0, x1, y1;
+
+	int x, y;
+
 };
+
+Zone newZone(int x, int y) {
+
+	Zone nz = malloc(sizeof(struct zone));
+
+	if (nz == NULL )
+		return NULL ;
+
+	nz->c = NULL;
+	nz->max = 20;
+	nz->x = x;
+	nz->y = y;
+
+	return nz;
+
+}
+
+void freeZone(Zone z) {
+
+	if (z == NULL )
+		return;
+
+	freeColony(z->c);
+}
 
 AList updateZone(Zone z, int time) {
 
@@ -29,37 +58,40 @@ AList updateZone(Zone z, int time) {
 
 	updateColony(z->c, time);
 
-	/* return excedents rabbits */
-
-	int count = getColonyCount(z->c);
-
-	if (count <= z->max)
-		return NULL ;
-
-	AList list = newAnimalList();
-	if (list == NULL )
-		return NULL ;
-
-	Animal a;
-	UDistri d;
-	while (count > z->max) {
-		d = newUDistri(1, count);
-		/*removeFromColony(z->c, &a, nextUDistriRandom(d)); */
-		insertAnimal(list, &a);
-		count--;
-	}
-
-	return list;
+	/* return excess rabbits */
+	return trimColony(z->c, z->max);
 }
 
 Colony getZoneColony(Zone z) {
-	return z->c;
+
+	return z == NULL ? NULL : z->c;
 }
 
 void setZoneColony(Zone z, Colony c) {
+
+	if (z == NULL )
+		return;
+
+	if (z->c != NULL )
+		return;
+
 	z->c = c;
 }
 
 int huntRabbit(Zone z) {
 	return 1;
+}
+
+int getZoneMax(Zone z) {
+
+	return z == NULL ? -1 : z->max;
+}
+
+void printfZone(Zone z) {
+
+	if (z == NULL )
+		return;
+
+	printf("Zone Animals = %d x = %d  y = %d\n", getColonyCount(z->c), z->x,
+			z->y);
 }
