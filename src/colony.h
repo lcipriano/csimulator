@@ -21,6 +21,8 @@ void initColony(Colony c, int count, int time, int (*idGenerator)(void));
 
 void setColonyAnimals(Colony c, AList al);
 
+AList getColonyAnimals(Colony c);
+
 void updateColony(Colony c, int time);
 
 int getColonyCount(Colony c);

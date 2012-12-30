@@ -23,8 +23,8 @@ int main(void) {
 	float y1 = 0.0;
 	float x2 = 1000.0;
 	float y2 = 1000.0;
-	int nx = 3;
-	int ny = 3;
+	int nx = 4;
+	int ny = 4;
 
 	setArea(x1, y1, x2, y2, nx, ny, getFoxPop(), getRabbitPop());
 	printfArea();

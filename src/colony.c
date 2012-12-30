@@ -103,6 +103,10 @@ void initColony(Colony c, int count, int time, int (*idGenerator)(void)) {
 	} while (i < count);
 }
 
+AList getColonyAnimals(Colony c) {
+	return c == NULL ? NULL : c->animals;
+}
+
 void setColonyAnimals(Colony c, AList al) {
 
 	if (c == NULL || al == NULL )

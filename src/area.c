@@ -13,6 +13,10 @@
 #include "alist.h"
 #include "zone.h"
 #include "rabbit.h"
+#include "fox.h"
+
+#define min(a,b) ((a)<(b)?(a):(b))
+#define max(a,b) ((a)>(b)?(a):(b))
 
 typedef struct {
 	float xb, yb, tx, ty;
@@ -37,29 +41,6 @@ static void setAreaZones() {
 			area.zones[i][j] = newZone(i, j);
 }
 
-void setArea(float x1, float y1, float x2, float y2, int nx, int ny,
-		Population *f, Population *r) {
-
-	area.xb = x1;
-	area.yb = y1;
-	area.tx = x2;
-	area.ty = y2;
-	area.nx = nx;
-	area.ny = ny;
-
-	area.XDistri = newUDistri(x1, x2);
-	area.YDistri = newUDistri(y1, y2);
-
-	area.foxs = newColony(f);
-
-	setAreaZones();
-
-	Colony c = newColony(r);
-	initColony(c, 20, 0, getRabbitID);
-	setZoneColony(area.zones[nx / 2][ny / 2], c);
-
-}
-
 static void freeAreaZones() {
 
 	int i, j;
@@ -74,21 +55,6 @@ static void freeAreaZones() {
 	free(area.zones);
 
 }
-
-void freeArea() {
-
-	freeColony(area.foxs);
-	freeAreaZones();
-}
-
-void getAreaRandomCoords(float *x, float *y) {
-
-	*x = nextUDistriRandom(area.XDistri);
-	*y = nextUDistriRandom(area.YDistri);
-}
-
-#define min(a,b) ((a)<(b)?(a):(b))
-#define max(a,b) ((a)>(b)?(a):(b))
 
 static Zone nextFreeZone(int y0, int x0) {
 
@@ -106,8 +72,8 @@ static Zone nextFreeZone(int y0, int x0) {
 
 		/* scan north line of the square */
 
-		int xmax = min(eastx,area.nx-1);
-		int xmin = max(westx,0);
+		int xmax = min(eastx, area.nx - 1);
+		int xmin = max(westx, 0);
 
 		if (0 <= northy) {
 
@@ -124,8 +90,8 @@ static Zone nextFreeZone(int y0, int x0) {
 
 		/* scan east line of the square */
 
-		int ymin = max(0,northy+1);
-		int ymax = min(area.ny-1,southy);
+		int ymin = max(0, northy + 1);
+		int ymax = min(area.ny - 1, southy);
 
 		if (eastx < area.nx) {
 
@@ -226,6 +192,42 @@ static void updateZones(int time) {
 
 }
 
+static float getAreaRandomX() {
+
+	return nextUDistriRandom(area.XDistri);
+
+}
+
+static float getAreaRandomY() {
+
+	return nextUDistriRandom(area.YDistri);
+
+}
+
+static void initFoxColony(Colony c, int initCount, int time,
+		int (*idGenerator)(void)) {
+
+	if (c == NULL )
+		return;
+
+	initColony(c, initCount, time, idGenerator);
+
+	/* set the coords */
+	AList f = getColonyAnimals(c);
+	ListIter fi = newListIter(f);
+	if (fi == NULL )
+		return;
+
+	Animal *pa;
+	while ((pa = ListIterNext(fi, NULL )) != NULL ) {
+		pa->x = getAreaRandomX();
+		pa->y = getAreaRandomY();
+	}
+	freeListIter(fi);
+
+	printfAnimalList(f);
+}
+
 static void updateFoxes(int time) {
 
 	/* update the foxs */
@@ -233,6 +235,41 @@ static void updateFoxes(int time) {
 }
 
 static void huntRabbbit() {
+}
+
+static void setAreaFoxs() {
+
+	area.foxs = newColony(getFoxPop());
+	initFoxColony(area.foxs, 4, 0, getFoxID);
+}
+
+void setArea(float x1, float y1, float x2, float y2, int nx, int ny,
+		Population *f, Population *r) {
+
+	area.xb = x1;
+	area.yb = y1;
+	area.tx = x2;
+	area.ty = y2;
+	area.nx = nx;
+	area.ny = ny;
+
+	area.XDistri = newUDistri(x1, x2);
+	area.YDistri = newUDistri(y1, y2);
+
+	setAreaFoxs();
+
+	setAreaZones();
+
+	Colony c = newColony(r);
+	initColony(c, 20, 0, getRabbitID);
+	setZoneColony(area.zones[nx / 2][ny / 2], c);
+
+}
+
+void freeArea() {
+
+	freeColony(area.foxs);
+	freeAreaZones();
 }
 
 void updateArea(int time) {
@@ -248,6 +285,14 @@ void updateArea(int time) {
 void printfArea() {
 
 	int i, j;
+
+	printf("\n");
+	for (i = 0; i < area.ny; ++i) {
+		for (j = 0; j < area.nx; ++j) {
+			printf("%c", getZoneColony(area.zones[i][j]) == NULL ? '0' : 'X');
+		}
+		printf("\n");
+	}
 
 	for (i = 0; i < area.ny; ++i)
 		for (j = 0; j < area.nx; ++j)

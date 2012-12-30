@@ -49,6 +49,8 @@ void freeZone(Zone z) {
 		return;
 
 	freeColony(z->c);
+
+	free(z);
 }
 
 AList updateZone(Zone z, int time) {

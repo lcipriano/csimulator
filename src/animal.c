@@ -11,6 +11,6 @@
 
 void printfAnimal(Animal *r) {
 
-	printf("ID:%4d  BT:%4d  AT:%4d  DT:%4d\n", r->id, r->birthTime, r->adultTime,
-			r->deathTime);
+	printf("ID:%4d  BT:%4d  AT:%4d  DT:%4d X:%3f  Y:%3f\n", r->id, r->birthTime,
+			r->adultTime, r->deathTime, r->x, r->y);
 }
