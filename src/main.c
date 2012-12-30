@@ -30,7 +30,6 @@ int main(void) {
 	printfArea();
 
 	updateArea(1);
-	printfArea();
 
 	freeArea();
 

@@ -22,6 +22,8 @@ struct zone {
 
 	int x, y;
 
+	int noUpdate;
+
 };
 
 Zone newZone(int x, int y) {
@@ -35,6 +37,7 @@ Zone newZone(int x, int y) {
 	nz->max = 20;
 	nz->x = x;
 	nz->y = y;
+	nz->noUpdate = 1;
 
 	return nz;
 
@@ -53,7 +56,7 @@ AList updateZone(Zone z, int time) {
 	if (z == NULL )
 		return NULL ;
 
-	if (z->c == NULL )
+	if (z->c == NULL || z->noUpdate)
 		return NULL ;
 
 	updateColony(z->c, time);
@@ -94,4 +97,14 @@ void printfZone(Zone z) {
 
 	printf("Zone Animals = %d x = %d  y = %d\n", getColonyCount(z->c), z->x,
 			z->y);
+}
+
+void setZoneUpdate(Zone z) {
+
+	if (z == NULL )
+		return;
+
+	if (z->c != NULL )
+		z->noUpdate = 0;
+
 }

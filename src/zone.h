@@ -28,4 +28,6 @@ int huntRabbit(Zone z);
 
 void printfZone(Zone z);
 
+void setZoneUpdate(Zone z);
+
 #endif /* ZONE_H_ */

@@ -5,6 +5,7 @@
  *      Author: lcipriano
  */
 
+#include <stdio.h>
 #include <stdlib.h>
 
 #include "area.h"
@@ -55,7 +56,7 @@ void setArea(float x1, float y1, float x2, float y2, int nx, int ny,
 
 	Colony c = newColony(r);
 	initColony(c, 20, 0, getRabbitID);
-	setZoneColony(area.zones[nx/2][ny/2], c);
+	setZoneColony(area.zones[nx / 2][ny / 2], c);
 
 }
 
@@ -86,50 +87,119 @@ void getAreaRandomCoords(float *x, float *y) {
 	*y = nextUDistriRandom(area.YDistri);
 }
 
-static Zone nextFreeZone(int x0, int y0) {
+#define min(a,b) ((a)<(b)?(a):(b))
+#define max(a,b) ((a)>(b)?(a):(b))
 
-	int x, y, d = 1, inside = 1;
+static Zone nextFreeZone(int y0, int x0) {
 
+	int x, y;
+
+	int d = 1, inside = 1;
 	while (inside) {
+
 		inside = 0;
-		for (y = y0 - d; y <= y0 + d; ++y) {
 
-			if (0 <= y && y < area.ny) {
+		int northy = y0 - d;
+		int westx = x0 - d;
+		int southy = y0 + d;
+		int eastx = x0 + d;
 
-				for (x = x0 - d; x <= x0 + d; ++x) {
-					if (0 <= x && x < area.nx) {
-						inside = 1;
-						if (getZoneColony(area.zones[x][x]) == NULL )
-							return area.zones[x][x];
-					}
+		/* scan north line of the square */
 
+		int xmax = min(eastx,area.nx-1);
+		int xmin = max(westx,0);
+
+		if (0 <= northy) {
+
+			inside = 1;
+			y = northy;
+			for (x = xmin; x <= xmax; ++x) {
+				if (getZoneColony(area.zones[y][x]) == NULL ) {
+					printf("x0 = %d  y0 = %d  fx = %d  fy = %d d = %d\n", x0,
+							y0, x, y, d);
+					return area.zones[y][x];
 				}
 			}
+		}
 
-		};
+		/* scan east line of the square */
+
+		int ymin = max(0,northy+1);
+		int ymax = min(area.ny-1,southy);
+
+		if (eastx < area.nx) {
+
+			inside = 1;
+			x = eastx;
+			for (y = ymin; y <= ymax; ++y) {
+				if (getZoneColony(area.zones[y][x]) == NULL ) {
+					printf("x0 = %d  y0 = %d  fx = %d  fy = %d d = %d\n", x0,
+							y0, x, y, d);
+					return area.zones[y][x];
+				}
+			}
+		}
+
+		/* scan south line of the square */
+
+		if (southy < area.ny) {
+
+			inside = 1;
+			y = southy;
+			for (x = xmax - 1; x >= xmin; --x) {
+				if (getZoneColony(area.zones[y][x]) == NULL ) {
+					printf("x0 = %d  y0 = %d  fx = %d  fy = %d d = %d\n", x0,
+							y0, x, y, d);
+					return area.zones[y][x];
+				}
+			}
+		}
+
+		/* scan west line of the square */
+
+		if (0 <= westx) {
+
+			inside = 1;
+			x = westx;
+			for (y = ymax - 1; y >= ymin; --y) {
+				if (getZoneColony(area.zones[y][x]) == NULL ) {
+					printf("x0 = %d  y0 = %d  fx = %d  fy = %d d = %d\n", x0,
+							y0, x, y, d);
+					return area.zones[y][x];
+				}
+			}
+		}
+
 		d++;
 	}
+
 	return NULL ;
 }
 
 static void updateZones(int time) {
 
-	int i, j;
+	int x, y;
 	AList newRabbitList;
 	Zone destZone;
 
-	/* update the zones with the rabbits */
-	for (i = 0; i < area.nx; ++i) {
+	/* only update zones with old colonies */
+	for (x = 0; x < area.nx; ++x)
+		for (y = 0; y < area.ny; ++y)
+			setZoneUpdate(area.zones[x][y]);
 
-		for (j = 0; j < area.ny; ++j) {
+	/* update the zones with the rabbits */
+	for (y = 0; y < area.ny; ++y) {
+
+		for (x = 0; x < area.nx; ++x) {
 
 			/* update the zone */
-			newRabbitList = updateZone(area.zones[i][j], time);
+			newRabbitList = updateZone(area.zones[y][x], time);
 
 			/* if rabbit pop of the zone more then 20 move excess to new zone */
 			while (newRabbitList != NULL ) {
+				printf("nrl = %d\n", getAnimalsCount(newRabbitList));
 
-				destZone = nextFreeZone(j, i);
+				destZone = nextFreeZone(y, x);
 
 				/* if found an empty zone creat a new colony */
 				if (destZone != NULL ) {
@@ -147,6 +217,8 @@ static void updateZones(int time) {
 					freeAnimalList(newRabbitList);
 					newRabbitList = NULL;
 				}
+
+				printfArea();
 
 			} /* while (newRabbitList != NULL ) */
 		} /* for j */
