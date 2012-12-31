@@ -12,7 +12,7 @@
 
 typedef struct zone *Zone;
 
-Zone newZone(int x, int y);
+Zone newZone(float x0, float y0, float x1, float y1);
 
 void freeZone(Zone z);
 
@@ -24,7 +24,15 @@ void setZoneColony(Zone z, Colony c);
 
 int getZoneMax(Zone z);
 
-int huntRabbit(Zone z);
+float getZoneCenterX(Zone z);
+
+float getZoneCenterY(Zone z);
+
+float getZoneRandomX(Zone z);
+
+float getZoneRandomY(Zone z);
+
+int huntZoneRabbit(Zone z);
 
 void printfZone(Zone z);
 

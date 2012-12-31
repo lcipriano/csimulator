@@ -30,6 +30,8 @@ int main(void) {
 	printfArea();
 
 	updateArea(1);
+	printf("last\n");
+	printfArea();
 
 	freeArea();
 

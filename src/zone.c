@@ -20,13 +20,15 @@ struct zone {
 
 	float x0, y0, x1, y1;
 
-	int x, y;
+	float xc, yc;
 
 	int noUpdate;
 
+	UDistri XDistri, YDistri;
+
 };
 
-Zone newZone(int x, int y) {
+Zone newZone(float x0, float y0, float x1, float y1) {
 
 	Zone nz = malloc(sizeof(struct zone));
 
@@ -35,12 +37,17 @@ Zone newZone(int x, int y) {
 
 	nz->c = NULL;
 	nz->max = 20;
-	nz->x = x;
-	nz->y = y;
+	nz->xc = (x0 + x1) / 2;
+	nz->yc = (y0 + y1) / 2;
+	nz->x0 = x0;
+	nz->x1 = x1;
+	nz->y0 = y0;
+	nz->y1 = y1;
 	nz->noUpdate = 1;
+	nz->XDistri = newUDistri(x0, x1);
+	nz->YDistri = newUDistri(y0, y1);
 
 	return nz;
-
 }
 
 void freeZone(Zone z) {
@@ -83,8 +90,13 @@ void setZoneColony(Zone z, Colony c) {
 	z->c = c;
 }
 
-int huntRabbit(Zone z) {
-	return 1;
+int huntZoneRabbit(Zone z) {
+
+	if (z == NULL )
+		return 0;
+
+	Animal a;
+	return removeRandAnimal(getColonyAnimals(z->c), &a) == NULL ? 0 : 1;
 }
 
 int getZoneMax(Zone z) {
@@ -97,8 +109,11 @@ void printfZone(Zone z) {
 	if (z == NULL )
 		return;
 
-	printf("Zone Animals = %d x = %d  y = %d\n", getColonyCount(z->c), z->x,
-			z->y);
+	printf("Zone Animals = %d \n", getColonyCount(z->c));
+	/*
+	 printf("Zone Animals = %d x0=%.3f y0=%.3f x1=%.3f y1=%.3f\n",
+	 getColonyCount(z->c), z->x0, z->y0, z->x1, z->y1);
+	 */
 }
 
 void setZoneUpdate(Zone z) {
@@ -108,5 +123,25 @@ void setZoneUpdate(Zone z) {
 
 	if (z->c != NULL )
 		z->noUpdate = 0;
+
+}
+
+float getZoneCenterX(Zone z) {
+	return z == NULL ? 0.0 : z->xc;
+}
+
+float getZoneCenterY(Zone z) {
+	return z == NULL ? 0.0 : z->yc;
+}
+
+float getZoneRandomX(Zone z) {
+
+	return z == NULL ? -1.0 : nextUDistriRandom(z->XDistri);
+
+}
+
+float getZoneRandomY(Zone z) {
+
+	return z == NULL ? -1.0 : nextUDistriRandom(z->YDistri);
 
 }
