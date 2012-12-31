@@ -14,24 +14,26 @@ struct colony {
 
 	int ID;
 
+	float x, y;
+
 	/** population type */
-	Population *pop;
+	Specimen *pop;
 
-	/** repository for the Animals */
-	AList animals;
+	/** repository for the Individuals */
+	IList Individuals;
 
-	/* id animal generator */
-	int (*getAnimalID)(void);
+	/* id Individual generator */
+	int (*getIndividualID)(void);
 
 };
 
-static Animal *newAnimal(Colony c, Animal *nr, int birthTime) {
+static Individual *newIndividual(Colony c, Individual *nr, int birthTime) {
 
 	if (!isBreedSeason(c->pop, birthTime))
 		return NULL ;
 
 	if (nr == NULL ) {
-		nr = malloc(sizeof(Animal));
+		nr = malloc(sizeof(Individual));
 		if (nr == NULL )
 			return NULL ;
 	}
@@ -44,19 +46,20 @@ static Animal *newAnimal(Colony c, Animal *nr, int birthTime) {
 	nr->birthTime = birthTime;
 	nr->adultTime = adultTime;
 	nr->deathTime = deathTime;
+	nr->specimen = getSpecimenID(c->pop);
 
 	return nr;
 
 }
 
-static Animal *insertAnimalInColony(Colony c, Animal *a) {
+static Individual *insertIndividualInColony(Colony c, Individual *a) {
 
-	Animal *storedAnimal = insertAnimal(c->animals, a);
+	Individual *storedIndividual = insertIndividual(c->Individuals, a);
 
-	if (storedAnimal != NULL )
-		storedAnimal->id = c->getAnimalID();
+	if (storedIndividual != NULL )
+		storedIndividual->id = c->getIndividualID();
 
-	return storedAnimal;
+	return storedIndividual;
 
 }
 
@@ -65,20 +68,23 @@ static Animal *insertAnimalInColony(Colony c, Animal *a) {
  * @param pt
  * @return
  */
-Colony newColony(Population *pt) {
+Colony newColony(Specimen *pt) {
+
+	static int nextID = 1;
 
 	Colony nc = malloc(sizeof(struct colony));
 
 	if (nc == NULL )
 		return NULL ;
 
-	nc->animals = newAnimalList();
-	if (nc->animals == NULL ) {
+	nc->Individuals = newIndividualList();
+	if (nc->Individuals == NULL ) {
 		free(nc);
 		return NULL ;
 	}
 
 	nc->pop = pt;
+	nc->ID = nextID++;
 
 	return nc;
 }
@@ -88,34 +94,48 @@ void initColony(Colony c, int count, int time, int (*idGenerator)(void)) {
 	if (c == NULL )
 		return;
 
-	c->getAnimalID = idGenerator;
+	c->getIndividualID = idGenerator;
 
 	int i = 0;
-	Animal a;
+	Individual a;
 	do {
-		/* create new animal */
-		if (newAnimal(c, &a, time - getLifeAge(c->pop)) != NULL ) {
-			/* check if animal alive */
+		/* create new Individual */
+		if (newIndividual(c, &a, time - getLifeAge(c->pop)) != NULL ) {
+			/* check if Individual alive */
 			if (a.deathTime >= time)
-				if (insertAnimalInColony(c, &a) != NULL )
+				if (insertIndividualInColony(c, &a) != NULL )
 					i++;
 		}
 	} while (i < count);
 }
 
-AList getColonyAnimals(Colony c) {
-	return c == NULL ? NULL : c->animals;
+IList getColonyIndividuals(Colony c) {
+	return c == NULL ? NULL : c->Individuals;
 }
 
-void setColonyAnimals(Colony c, AList al) {
+void setColonyIndividuals(Colony c, IList al) {
 
 	if (c == NULL || al == NULL )
 		return;
 
-	freeAnimalList(c->animals);
+	freeIndividualList(c->Individuals);
 
-	c->animals = al;
+	c->Individuals = al;
 
+}
+
+void setColonyX(Colony c, float x) {
+
+	if (c == NULL )
+		return;
+	c->x = x;
+}
+
+void setColonyY(Colony c, float y) {
+
+	if (c == NULL )
+		return;
+	c->y = y;
 }
 
 void freeColony(Colony c) {
@@ -123,7 +143,7 @@ void freeColony(Colony c) {
 	if (c == NULL )
 		return;
 
-	freeAnimalList(c->animals);
+	freeIndividualList(c->Individuals);
 
 	free(c);
 }
@@ -136,10 +156,10 @@ void updateColony(Colony c, int time) {
 	if (!isBreedSeason(c->pop, time))
 		return;
 
-	/* breed Animals */
+	/* breed Individuals */
 
-	/* calc number of couple Animals */
-	int nCouples = getAdultsCount(c->animals, time) / 2;
+	/* calc number of couple Individuals */
+	int nCouples = getAdultsCount(c->Individuals, time) / 2;
 
 	/* number of breeds in this time/month */
 	int nBreeds = getBreeds(c->pop), i, j;
@@ -149,25 +169,40 @@ void updateColony(Colony c, int time) {
 
 	/*printf("couples = %d breads = %d kits = %d\n", nCouples, nBreeds, K);*/
 
-	Animal a;
+	Individual a;
 	for (i = 1; i <= nBreeds; ++i)
 		for (j = 1; j <= nKits; ++j)
-			insertAnimalInColony(c, newAnimal(c, &a, time));
+			insertIndividualInColony(c, newIndividual(c, &a, time));
 
-	c->animals = removeOldAnimals(c->animals, time);
+	c->Individuals = removeOldIndividuals(c->Individuals, time);
 
 }
 
 void printfColony(Colony c) {
 
-	printfAnimalList(c->animals);
+	printfIndividualList(c->Individuals);
 }
 
 int getColonyCount(Colony c) {
-	return c == NULL ? -1 : getAnimalsCount(c->animals);
+	return c == NULL ? -1 : getIndividualsCount(c->Individuals);
 }
 
-AList trimColony(Colony c, int newCount) {
+IList trimColony(Colony c, int newCount) {
 
-	return c == NULL ? NULL : trimAnimalList(c->animals, newCount);
+	return c == NULL ? NULL : trimIndividualList(c->Individuals, newCount);
+}
+
+Message getColonyMsg(Colony c) {
+
+	Message nm;
+
+	if (c == NULL ) {
+		nm.str[0] = '\0';
+	} else {
+		sprintf(nm.str, "COLONIA %d %d %d %f %f", c->pop->type, c->ID,
+				getColonyCount(c), c->x, c->y);
+	}
+
+	return nm;
+
 }

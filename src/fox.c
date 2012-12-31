@@ -22,13 +22,13 @@ int favgBreedsBySeason = 1;
 /** numero médio de crias por casal */
 int favgKitsByCouple = 2;
 
-static Population foxs;
+static Specimen foxs;
 static int first = 1;
 
 static void initFoxs() {
 
 	if (first) {
-		newPopulation(&foxs, fstartBreedTime, fendBreedTime, fadultAge,
+		newPopulation(&foxs, 2, fstartBreedTime, fendBreedTime, fadultAge,
 				favgTimeAge, favgBreedsBySeason, favgKitsByCouple);
 		first = 0;
 	}
@@ -41,7 +41,7 @@ int getFoxID(void) {
 	return id++;
 }
 
-Population *getFoxPop() {
+Specimen *getFoxPop() {
 
 	initFoxs();
 

@@ -10,37 +10,37 @@
 #include <stdio.h>
 #include <math.h>
 
-#include "alist.h"
+#include "ilist.h"
 #include "smath.h"
 
-AList newAnimalList() {
+IList newIndividualList() {
 
-	return newList(sizeof(Animal));
+	return newList(sizeof(Individual));
 }
 
-void freeAnimalList(AList al) {
+void freeIndividualList(IList al) {
 
 	freeList(al);
 }
 
-Animal *insertAnimal(AList al, Animal *pr) {
+Individual *insertIndividual(IList al, Individual *pr) {
 
 	return addListTail(al, pr);
 }
 
-Animal *getAnimal(AList al, Animal *a, int index) {
+Individual *getAnimal(IList al, Individual *a, int index) {
 
 	return getListAt(al, a, index);
 
 }
 
-int getAdultsCount(AList al, int time) {
+int getAdultsCount(IList al, int time) {
 
 	ListIter iter = newListIter(al);
 	if (iter == NULL )
 		return -1;
 
-	Animal *pr;
+	Individual *pr;
 	int count = 0;
 
 	while ((pr = ListIterNext(iter, NULL )) != NULL )
@@ -51,17 +51,17 @@ int getAdultsCount(AList al, int time) {
 	return count;
 }
 
-int getAnimalsCount(AList al) {
+int getIndividualsCount(IList al) {
 
 	return getListCount(al);
 }
 
-AList removeOldAnimals(AList actual, int timeLimit) {
+IList removeOldIndividuals(IList actual, int timeLimit) {
 
 	if (actual == NULL )
 		return NULL ;
 
-	AList new = newAnimalList();
+	IList new = newIndividualList();
 	if (new == NULL )
 		return NULL ;
 
@@ -72,12 +72,12 @@ AList removeOldAnimals(AList actual, int timeLimit) {
 	}
 
 	/* copy youngs to a new list */
-	Animal *pr;
+	Individual *pr;
 	while ((pr = ListIterNext(iter, NULL )) != NULL ) {
 		/*printf("death\n");
 		 printfAnimal(pr);*/
 		if (pr->deathTime > timeLimit)
-			insertAnimal(new, pr);
+			insertIndividual(new, pr);
 	}
 	freeListIter(iter);
 
@@ -88,28 +88,28 @@ AList removeOldAnimals(AList actual, int timeLimit) {
 
 }
 
-void printfAnimalList(AList al) {
+void printfIndividualList(IList al) {
 
 	ListIter iter = newListIter(al);
 	if (iter == NULL )
 		return;
 
-	printf("AList Total = %d\n", getAnimalsCount(al));
+	printf("AList Total = %d\n", getIndividualsCount(al));
 
-	Animal r;
+	Individual r;
 	while (ListIterNext(iter, &r) != NULL )
-		printfAnimal(&r);
+		printfIndividual(&r);
 	freeListIter(iter);
 }
 
-Animal *removeAnimal(AList al, Animal *a, int index) {
+Individual *removeIndividual(IList al, Individual *a, int index) {
 
 	return removeListAt(al, a, index);
 }
 
-Animal *removeRandAnimal(AList al, Animal *a) {
+Individual *removeRandIndividual(IList al, Individual *a) {
 
-	int count = getAnimalsCount(al);
+	int count = getIndividualsCount(al);
 
 	if (count <= 0)
 		return NULL ;
@@ -117,10 +117,10 @@ Animal *removeRandAnimal(AList al, Animal *a) {
 	/* generate a uniform distribution with the number of Animals */
 	UDistri d = newUDistri(1, count);
 
-	return removeAnimal(al, a, nextUDistriRandom(d));
+	return removeIndividual(al, a, nextUDistriRandom(d));
 }
 
-AList trimAnimalList(AList al, int newCount) {
+IList trimIndividualList(IList al, int newCount) {
 
 	int actualCount = getListCount(al);
 
@@ -129,14 +129,14 @@ AList trimAnimalList(AList al, int newCount) {
 	if (!(1 <= newCount && newCount < actualCount))
 		return NULL ;
 
-	AList list = newAnimalList();
+	IList list = newIndividualList();
 	if (list == NULL )
 		return NULL ;
 
-	Animal a;
+	Individual a;
 	int i;
 	for (i = newCount + 1; i <= actualCount; ++i)
-		insertAnimal(list, removeRandAnimal(al, &a));
+		insertIndividual(list, removeRandIndividual(al, &a));
 
 	return list;
 }

@@ -8,10 +8,10 @@
 #ifndef RABBIT_H_
 #define RABBIT_H_
 
-#include "population.h"
+#include "specimen.h"
 
 int getRabbitID(void);
 
-Population *getRabbitPop();
+Specimen *getRabbitPop();
 
 #endif /* RABBIT_H_ */

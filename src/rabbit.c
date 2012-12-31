@@ -22,13 +22,13 @@ int ravgBreedsBySeason = 9;
 /** numero médio de crias por casal */
 int ravgKitsByCouple = 5;
 
-static Population rabbits;
+static Specimen rabbits;
 static int first = 1;
 
 static void initRabbits() {
 
 	if (first) {
-		newPopulation(&rabbits, rstartBreedTime, rendBreedTime, radultAge,
+		newPopulation(&rabbits, 1, rstartBreedTime, rendBreedTime, radultAge,
 				ravgTimeAge, ravgBreedsBySeason, ravgKitsByCouple);
 		first = 0;
 	}
@@ -41,7 +41,7 @@ int getRabbitID(void) {
 	return id++;
 }
 
-Population *getRabbitPop() {
+Specimen *getRabbitPop() {
 
 	initRabbits();
 

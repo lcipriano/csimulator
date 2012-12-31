@@ -8,10 +8,10 @@
 #ifndef FOX_H_
 #define FOX_H_
 
-#include "population.h"
+#include "specimen.h"
 
 int getFoxID(void);
 
-Population *getFoxPop();
+Specimen *getFoxPop();
 
 #endif /* FOX_H_ */

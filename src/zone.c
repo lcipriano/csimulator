@@ -72,7 +72,7 @@ void freeZone(Zone z) {
 	free(z);
 }
 
-AList updateZone(Zone z, int time) {
+IList updateZone(Zone z, int time) {
 
 	if (z == NULL )
 		return NULL ;
@@ -109,8 +109,8 @@ int huntZoneRabbit(Zone z) {
 	if (z == NULL )
 		return 0;
 
-	Animal a, *pa;
-	pa = removeRandAnimal(getColonyAnimals(z->c), &a);
+	Individual a, *pa;
+	pa = removeRandIndividual(getColonyIndividuals(z->c), &a);
 
 	removeColony(z);
 

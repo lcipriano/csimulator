@@ -7,17 +7,19 @@
 
 #include <stdlib.h>
 
-#include "population.h"
+#include "specimen.h"
 #include "math.h"
 
-Population *newPopulation(Population *p, int sbt, int ebt, int at, int atl,
-		int abs, int akc) {
+Specimen *newPopulation(Specimen *p, int type, int sbt, int ebt, int at,
+		int atl, int abs, int akc) {
 
 	if (p == NULL )
-		p = malloc(sizeof(Population));
+		p = malloc(sizeof(Specimen));
 
 	if (p == NULL )
 		return NULL ;
+
+	p->type = type;
 
 	/** início da temporada de gestação */
 	p->startBreedTime = sbt;
@@ -50,25 +52,29 @@ Population *newPopulation(Population *p, int sbt, int ebt, int at, int atl,
 
 }
 
-int getLifeAge(Population *p) {
+int getSpecimenID(Specimen *p) {
+	return p != NULL ? p->type : -1;
+}
+
+int getLifeAge(Specimen *p) {
 	return p != NULL ?
 			(int) floor(0.5 + nextUDistriRandom(p->timeLifeDistri)) : -1;
 }
 
-int getAdultAge(Population *p) {
+int getAdultAge(Specimen *p) {
 	return p != NULL ? p->adultAge : -1;
 }
 
-int getBreeds(Population *p) {
+int getBreeds(Specimen *p) {
 	return p != NULL ?
 			(int) floor(0.5 + nextPoDistriRandom(p->breedsDistri)) : -1;
 }
 
-int getKits(Population *p) {
+int getKits(Specimen *p) {
 	return p != NULL ? (int) floor(0.5 + nextPoDistriRandom(p->kitsDistri)) : -1;
 }
 
-int isBreedSeason(Population *p, int time) {
+int isBreedSeason(Specimen *p, int time) {
 
 	if (p == NULL )
 		return 0;

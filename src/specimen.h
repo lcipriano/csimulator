@@ -12,6 +12,8 @@
 
 typedef struct {
 
+	int type;
+
 	/** início da temporada de gestação */
 	int startBreedTime;
 
@@ -39,19 +41,21 @@ typedef struct {
 	/** gerador aleatório de crias por casal */
 	PoDistri kitsDistri;
 
-} Population;
+} Specimen;
 
-Population *newPopulation(Population *p, int sbt, int ebt, int at, int atl, int abs,
-		int akc);
+Specimen *newPopulation(Specimen *p, int type, int sbt, int ebt, int at,
+		int atl, int abs, int akc);
 
-int getLifeAge(Population *p);
+int getSpecimenID(Specimen *p);
 
-int getAdultAge(Population *p);
+int getLifeAge(Specimen *p);
 
-int getBreeds(Population *p);
+int getAdultAge(Specimen *p);
 
-int getKits(Population *p);
+int getBreeds(Specimen *p);
 
-int isBreedSeason(Population *p, int time);
+int getKits(Specimen *p);
+
+int isBreedSeason(Specimen *p, int time);
 
 #endif /* POPTYPE_H_ */

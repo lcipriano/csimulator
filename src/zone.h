@@ -16,7 +16,7 @@ Zone newZone(float x0, float y0, float x1, float y1, int line, int col);
 
 void freeZone(Zone z);
 
-AList updateZone(Zone z, int time);
+IList updateZone(Zone z, int time);
 
 Colony getZoneColony(Zone z);
 

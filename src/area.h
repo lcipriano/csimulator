@@ -8,17 +8,18 @@
 #ifndef AREA_H_
 #define AREA_H_
 
-#include "population.h"
+#include "specimen.h"
+#include "message.h"
 
 void setArea(float x1, float y1, float x2, float y2, int nx, int ny,
-		Population *f, Population *r);
+		Specimen *f, Specimen *r);
 
 void freeArea();
-
-void getAreaRandomCoords(float *x, float *y);
 
 void updateArea(int time);
 
 void printfArea();
+
+Message getAreaMsg();
 
 #endif /* AREA_H_ */

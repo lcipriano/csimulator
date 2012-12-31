@@ -19,7 +19,7 @@
 #define max(a,b) ((a)>(b)?(a):(b))
 
 typedef struct {
-	float bottomx, bottomy, topx, topy;
+	float xmin, ymin, xmax, ymax;
 	int nx, ny;
 	UDistri XDistri, YDistri;
 	Colony foxs;
@@ -37,8 +37,8 @@ static void setAreaZones() {
 	for (i = 0; i < area.ny; ++i)
 		area.zones[i] = calloc(area.nx, sizeof(Zone));
 
-	flinear xscale = newflinear(0, area.bottomx, area.nx, area.topx);
-	flinear yscale = newflinear(area.ny, 0, 0, area.topy);
+	flinear xscale = newflinear(0, area.xmin, area.nx, area.xmax);
+	flinear yscale = newflinear(area.ny, 0, 0, area.ymax);
 
 	for (i = area.ny - 1; i >= 0; --i) {
 		for (j = 0; j < area.nx; ++j) {
@@ -159,7 +159,7 @@ static Zone nextFreeZone(int y0, int x0) {
 static void updateZones(int time) {
 
 	int x, y;
-	AList newRabbitList;
+	IList newRabbitList;
 	Zone destZone;
 
 	/* only update zones with old colonies */
@@ -185,7 +185,9 @@ static void updateZones(int time) {
 				if (destZone != NULL ) {
 
 					Colony nc = newColony(getRabbitPop());
-					setColonyAnimals(nc, newRabbitList);
+					setColonyIndividuals(nc, newRabbitList);
+					setColonyX(nc, getZoneCenterX(destZone));
+					setColonyY(nc, getZoneCenterY(destZone));
 					setZoneColony(destZone, nc);
 
 					/* trim the new Colony */
@@ -194,7 +196,7 @@ static void updateZones(int time) {
 				} else {
 
 					/* no empty zone destroy  list */
-					freeAnimalList(newRabbitList);
+					freeIndividualList(newRabbitList);
 					newRabbitList = NULL;
 				}
 
@@ -225,12 +227,12 @@ static void initFoxColony(Colony c, int initCount, int time,
 	initColony(c, initCount, time, idGenerator);
 
 	/* set the coords */
-	AList f = getColonyAnimals(c);
+	IList f = getColonyIndividuals(c);
 	ListIter fi = newListIter(f);
 	if (fi == NULL )
 		return;
 
-	Animal *pa;
+	Individual *pa;
 	while ((pa = ListIterNext(fi, NULL )) != NULL ) {
 		pa->x = getAreaRandomX();
 		pa->y = getAreaRandomY();
@@ -245,10 +247,10 @@ static void updateFoxes(int time) {
 	updateColony(area.foxs, time);
 }
 
-static void printfFox(Animal *a, const char *prefix) {
+static void printfFox(Individual *a, const char *prefix) {
 
 	printf("Fox %-32s E:%.2f ", prefix, a->energy);
-	printfAnimal(a);
+	printfIndividual(a);
 }
 
 static List getAreaZonesWithRabbits() {
@@ -312,29 +314,29 @@ static Zone getNearZone(List zl, float x, float y) {
 
 static void removeDeadFoxs() {
 
-	AList new = newAnimalList();
+	IList new = newIndividualList();
 	if (new == NULL )
 		return;
 
-	ListIter iter = newListIter(getColonyAnimals(area.foxs));
+	ListIter iter = newListIter(getColonyIndividuals(area.foxs));
 	if (iter == NULL ) {
 		freeList(new);
 		return;
 	}
 
 	/* copy non dead foxs to a new list */
-	Animal *pr;
+	Individual *pr;
 	while ((pr = ListIterNext(iter, NULL )) != NULL )
 		if (pr->energy > 0.0)
-			insertAnimal(new, pr);
+			insertIndividual(new, pr);
 	freeListIter(iter);
 
 	/* free actual list */
-	setColonyAnimals(area.foxs, new);
+	setColonyIndividuals(area.foxs, new);
 
 }
 
-static void huntRabbit(Animal *fox) {
+static void huntRabbit(Individual *fox) {
 
 	/* request the set of Zones with rabbits */
 	List huntingZones = getAreaZonesWithRabbits();
@@ -426,11 +428,11 @@ static void huntRabbit(Animal *fox) {
 
 static void huntRabbits(int time) {
 
-	ListIter foxs = newListIter(getColonyAnimals(area.foxs));
+	ListIter foxs = newListIter(getColonyIndividuals(area.foxs));
 	if (foxs == NULL )
 		return;
 
-	Animal *pf;
+	Individual *pf;
 	while ((pf = ListIterNext(foxs, NULL )) != NULL )
 		/* only adult foxs hunt */
 		if (time >= pf->adultTime)
@@ -447,12 +449,12 @@ static void setAreaFoxs() {
 }
 
 void setArea(float x1, float y1, float x2, float y2, int nx, int ny,
-		Population *f, Population *r) {
+		Specimen *f, Specimen *r) {
 
-	area.bottomx = x1;
-	area.bottomy = y1;
-	area.topx = x2;
-	area.topy = y2;
+	area.xmin = x1;
+	area.ymin = y1;
+	area.xmax = x2;
+	area.ymax = y2;
 	area.nx = nx;
 	area.ny = ny;
 
@@ -527,5 +529,16 @@ void printfArea() {
 				zoneTotalCount += count;
 
 	printf("Rabbits %d\n", zoneTotalCount);
+
+}
+
+Message getAreaMsg() {
+
+	Message nm;
+
+	sprintf(nm.str, "AREA %f %f %f %f", area.xmin, area.xmax, area.ymin,
+			area.ymax);
+
+	return nm;
 
 }
