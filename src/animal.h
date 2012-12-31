@@ -15,4 +15,6 @@ typedef struct {
 
 void printfAnimal(Animal *r);
 
+int getAnimalAge(Animal *a,int time);
+
 #endif /* ANIMAL_H */

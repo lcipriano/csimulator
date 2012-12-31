@@ -147,7 +147,7 @@ void updateColony(Colony c, int time) {
 	/* number of total kits */
 	int nKits = nCouples * K;
 
-	printf("couples = %d breads = %d kits = %d\n", nCouples, nBreeds, K);
+	/*printf("couples = %d breads = %d kits = %d\n", nCouples, nBreeds, K);*/
 
 	Animal a;
 	for (i = 1; i <= nBreeds; ++i)
