@@ -83,6 +83,8 @@ IList updateZone(Zone z, int time) {
 	if (z->c == NULL || z->noUpdate)
 		return NULL ;
 
+	updateColony(z->c, time);
+
 	/* return excess rabbits */
 	return trimColony(removeColony(z), z->max);
 }

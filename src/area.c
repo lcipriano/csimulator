@@ -184,7 +184,7 @@ static void updateZones(int time) {
 				/* if found an empty zone creat a new colony */
 				if (destZone != NULL ) {
 
-					Colony nc = newColony(getRabbitSpecimen());
+					Colony nc = newColony(getRabbitSpecimen(), getRabbitID);
 					setColonyIndividuals(nc, newRabbitList);
 					setColonyPos(nc, getZoneCenterX(destZone),
 							getZoneCenterY(destZone));
@@ -218,15 +218,14 @@ static float getAreaRandomY() {
 
 }
 
-static void initFoxColony(Colony c, int initCount, int time,
-		int (*idGenerator)(void)) {
+static void initFoxColony(Colony c, int initCount, int time) {
 
 	if (c == NULL )
 		return;
 
-	initColony(c, initCount, time, idGenerator);
+	initColony(c, initCount, time);
 
-	/* set the coords */
+	/* set the coords  and energy */
 	ListIter fi = getColonyIter(c);
 	if (fi == NULL )
 		return;
@@ -242,10 +241,20 @@ static void initFoxColony(Colony c, int initCount, int time,
 
 static void updateFoxes(int time) {
 
-	/* update the foxs */
-	printf("b foxs colony %p\n", area.foxs);
 	updateColony(area.foxs, time);
-	printf("a foxs colony %p\n", area.foxs);
+
+	/* set the coords  and energy */
+	ListIter fi = getColonyIter(area.foxs);
+	if (fi == NULL )
+		return;
+
+	Individual *pa;
+	while ((pa = ListIterNext(fi, NULL )) != NULL ) {
+		pa->x = getAreaRandomX();
+		pa->y = getAreaRandomY();
+		pa->energy = 0.95;
+	}
+	freeListIter(fi);
 }
 
 static void printfFox(Individual *a, const char *prefix) {
@@ -332,7 +341,6 @@ static void removeDeadFoxs() {
 			insertIndividual(new, pr);
 	freeListIter(iter);
 
-	printf("new %p", new);
 	/* free actual list */
 	setColonyIndividuals(area.foxs, new);
 
@@ -418,8 +426,6 @@ static void huntRabbit(Individual *fox) {
 		fox->energy -= 0.1 * (minRabbits - huntedRabbits);
 	}
 
-	printf("hunted rabbits = %d\n", huntedRabbits);
-
 	freeList(huntingZones);
 }
 
@@ -431,7 +437,6 @@ static void huntRabbits(int time) {
 
 	Individual *pf;
 	while ((pf = ListIterNext(foxs, NULL )) != NULL ) {
-		printfFox(pf, "");
 		/* only adult foxs hunt */
 		if (time >= pf->adultTime)
 			huntRabbit(pf);
@@ -443,8 +448,8 @@ static void huntRabbits(int time) {
 
 static void setAreaFoxs() {
 
-	area.foxs = newColony(getFoxSpecimen());
-	initFoxColony(area.foxs, 4, 0, getFoxID);
+	area.foxs = newColony(getFoxSpecimen(), getFoxID);
+	initFoxColony(area.foxs, 4, 0);
 }
 
 void setArea(float x1, float y1, float x2, float y2, int nx, int ny,
@@ -464,8 +469,8 @@ void setArea(float x1, float y1, float x2, float y2, int nx, int ny,
 
 	setAreaZones();
 
-	Colony c = newColony(r);
-	initColony(c, 20, 0, getRabbitID);
+	Colony c = newColony(r, getRabbitID);
+	initColony(c, 128, 0);
 	setZoneColony(area.zones[nx / 2][ny / 2], c);
 
 }
@@ -479,15 +484,13 @@ void freeArea() {
 void updateArea(int time) {
 
 	updateZones(time);
-	printfArea("After UPdate Rabbits");
+	/*printfArea("AFTER RABBBITS UPDATE");*/
 
 	updateFoxes(time);
-	printfArea("After UPdate Foxs");
-
-	/* foxes are hunting */
+	/*printfArea("AFTER FOXS UPDATE");*/
 
 	huntRabbits(time);
-	printfArea("After Foxs Hunt");
+	/*printfArea("AFTER FOXS HUNT");*/
 
 }
 
@@ -497,7 +500,7 @@ void printfArea(const char * msg) {
 
 	printf("\n%s\n", msg);
 
-	printf("Foxs %d %p ", getColonyCount(area.foxs), area.foxs);
+	printf("Foxs %d ", getColonyCount(area.foxs));
 
 	int zoneTotalCount = 0, count;
 
@@ -563,4 +566,53 @@ Message getAreaMsg() {
 
 	return nm;
 
+}
+
+void sendAreaMsg() {
+
+	sendMsg(getAreaMsg());
+
+}
+
+void sendAreaMsgTo(FILE *f) {
+
+	sendMsgTo(f, getAreaMsg());
+
+}
+
+void sendFoxsMsg() {
+
+	ListIter foxs = getColonyIter(area.foxs);
+
+	Individual *pf;
+	while ((pf = ListIterNext(foxs, NULL )) != NULL )
+		sendIndividualMsg(pf);
+	freeListIter(foxs);
+
+}
+
+void sendFoxsMsgTo(FILE *f) {
+
+	ListIter foxs = getColonyIter(area.foxs);
+
+	Individual *pf;
+	while ((pf = ListIterNext(foxs, NULL )) != NULL )
+		sendIndividualMsgTo(f, pf);
+	freeListIter(foxs);
+
+}
+
+void sendZonesMsg() {
+
+	int x, y;
+
+	for (y = 0; y < area.ny; ++y) {
+		for (x = 0; x < area.nx; ++x) {
+
+			if (getZoneColony(area.zones[y][x]) != NULL )
+				sendColonyMsg(getZoneColony(area.zones[y][x]));
+
+		}
+
+	}
 }

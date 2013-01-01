@@ -22,4 +22,12 @@ void printfArea(const char *msg);
 
 Message getAreaMsg();
 
+void sendAreaMsg();
+
+void sendAreaMsgTo(FILE *f);
+
+void sendFoxsMsg();
+
+void sendZonesMsg();
+
 #endif /* AREA_H_ */

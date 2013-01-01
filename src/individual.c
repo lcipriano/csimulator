@@ -58,3 +58,15 @@ void displaceIndividual(Individual *i, float dx, float dy) {
 	i->y += dy;
 
 }
+
+void sendIndividualMsg(Individual *i) {
+
+	sendMsg(getIndividualMsg(i));
+
+}
+
+void sendIndividualMsgTo(FILE *f, Individual *i) {
+
+	sendMsgTo(f, getIndividualMsg(i));
+
+}

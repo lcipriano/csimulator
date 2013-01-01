@@ -9,24 +9,22 @@
 
 #include "date.h"
 
-Date newDate(int y, int m, int d) {
+Date newDate(int d, int m, int y) {
 
 	Date nd = { y, m, d };
 
 	return nd;
 }
 
-Date incrementMonth(Date d) {
+Date incDateMonth(Date d) {
 
-	Date nd = d;
-
-	nd.m++;
-	if (nd.m > DEC) {
-		nd.m = JAN;
-		nd.y++;
+	d.m++;
+	if (d.m > DEC) {
+		d.m = JAN;
+		d.y++;
 	}
 
-	return nd;
+	return d;
 }
 
 Message getDateMsg(Date d) {
@@ -36,5 +34,17 @@ Message getDateMsg(Date d) {
 	sprintf(nm.str, "DATA %d %d %d", d.d, d.m, d.y);
 
 	return nm;
+
+}
+
+void sendDateMsg(Date d) {
+
+	sendMsg(getDateMsg(d));
+
+}
+
+void sendDateMsgTo(FILE *f, Date d) {
+
+	sendMsgTo(f, getDateMsg(d));
 
 }

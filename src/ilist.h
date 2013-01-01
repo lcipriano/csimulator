@@ -36,6 +36,14 @@ IList removeOldIndividuals(IList rl, int timeLimit);
 
 void printfIndividualList(IList rl);
 
+/**
+ * trims a list to a new size
+ *
+ * @param the list to trim
+ * @param the new list size less then the original size
+ * @return a new list with the excess elements
+ */
+
 IList trimIndividualList(IList al, int newCount);
 
 #endif /* ALIST_H */

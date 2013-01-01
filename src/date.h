@@ -20,6 +20,12 @@ typedef struct {
 
 Date newDate(int y, int m, int d);
 
-Date incrementMonth(Date d);
+Date incDateMonth(Date d);
+
+Message getDateMsg(Date d);
+
+void sendDateMsg(Date d);
+
+void sendAreaMsgTo(FILE *f);
 
 #endif /* DATA_H_ */

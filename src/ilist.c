@@ -64,13 +64,13 @@ IList removeOldIndividuals(IList actual, int timeLimit) {
 	IList new = newIndividualList();
 	if (new == NULL )
 		return NULL ;
-	printf("after new ind list  %p and actual %p\n", new, actual);
+
 	ListIter iter = newListIter(actual);
 	if (iter == NULL ) {
 		freeList(new);
+		/* if actual list empty, returns it */
 		return actual;
 	}
-	printf("after iter new ind list  %p and actual %p\n", new, actual);
 
 	/* copy youngs to a new list */
 	Individual *pr;
@@ -121,23 +121,23 @@ Individual *removeRandIndividual(IList al, Individual *a) {
 	return removeIndividual(al, a, nextUDistriRandom(d));
 }
 
-IList trimIndividualList(IList al, int newCount) {
+IList trimIndividualList(IList actualList, int newCount) {
 
-	int actualCount = getListCount(al);
+	int actualCount = getListCount(actualList);
 
 	/* !(1<= newCount < actualCount) */
 
 	if (!(1 <= newCount && newCount < actualCount))
 		return NULL ;
 
-	IList list = newIndividualList();
-	if (list == NULL )
+	IList excessList = newIndividualList();
+	if (excessList == NULL )
 		return NULL ;
 
 	Individual a;
 	int i;
 	for (i = newCount + 1; i <= actualCount; ++i)
-		insertIndividual(list, removeRandIndividual(al, &a));
+		insertIndividual(excessList, removeRandIndividual(actualList, &a));
 
-	return list;
+	return excessList;
 }

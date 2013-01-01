@@ -15,6 +15,7 @@
 #include "fox.h"
 #include "rabbit.h"
 #include "area.h"
+#include "date.h"
 
 int main(void) {
 
@@ -27,19 +28,26 @@ int main(void) {
 	int ny = 4;
 
 	setArea(x1, y1, x2, y2, nx, ny, getFoxSpecimen(), getRabbitSpecimen());
-	printfArea("set");
+	printfArea("Init");
 
-	int i, max = 4;
+	int i, max = 23;
 	char str[32];
+	Date d = newDate(1, 1, 2009);
 
 	for (i = 1; i <= max; ++i) {
 		updateArea(i);
-		sprintf(str, "Iteração %d", i);
+		/*
+		 sendDateMsg(d);
+		 sendAreaMsg();
+		 sendZonesMsg();
+		 sendFoxsMsg();
+
+		 */
+		sprintf(str, "Iteração %d\n", i);
 		printfArea(str);
 
+		d = incDateMonth(d);
 	}
-
-	updateArea(1);
 
 	freeArea();
 

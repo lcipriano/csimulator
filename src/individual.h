@@ -25,4 +25,8 @@ void displaceIndividual(Individual *i, float dx, float dy);
 
 Message getIndividualMsg(Individual *a);
 
+void sendIndividualMsg(Individual *i);
+
+void sendIndividualMsgTo(FILE *f, Individual *i);
+
 #endif /* ANIMAL_H */

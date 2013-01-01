@@ -68,7 +68,7 @@ static Individual *insertIndividualInColony(Colony c, Individual *a) {
  * @param pt
  * @return
  */
-Colony newColony(Specimen *pt) {
+Colony newColony(Specimen *pt, int (*idGenerator)(void)) {
 
 	static int nextID = 1;
 
@@ -85,16 +85,15 @@ Colony newColony(Specimen *pt) {
 
 	nc->pop = pt;
 	nc->ID = nextID++;
+	nc->getIndividualID = idGenerator;
 
 	return nc;
 }
 
-void initColony(Colony c, int count, int time, int (*idGenerator)(void)) {
+void initColony(Colony c, int count, int time) {
 
 	if (c == NULL )
 		return;
-
-	c->getIndividualID = idGenerator;
 
 	int i = 0;
 	Individual a;
@@ -205,10 +204,23 @@ Message getColonyMsg(Colony c) {
 	if (c == NULL ) {
 		nm.str[0] = '\0';
 	} else {
+		nm.str[0] = '\0';
 		sprintf(nm.str, "COLONIA %d %d %d %f %f", c->pop->type, c->ID,
 				getColonyCount(c), c->x, c->y);
 	}
 
 	return nm;
+
+}
+
+void sendColonyMsg(Colony c) {
+
+	sendMsg(getColonyMsg(c));
+
+}
+
+void sendColonyMsgTo(FILE *f, Colony c) {
+
+	sendMsgTo(f, getColonyMsg(c));
 
 }

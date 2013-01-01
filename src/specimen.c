@@ -40,7 +40,7 @@ Specimen *newPopulation(Specimen *p, int type, int sbt, int ebt, int at,
 	p->avgKitsByCouple = akc;
 
 	/** gerador aleatório de ninhadas por mês */
-	p->breedsDistri = newPoDistri((float) (ebt - sbt + 1) / abs);
+	p->breedsDistri = newPoDistri(((float) (ebt - sbt + 1)) / abs);
 
 	/** gerador aleatório de tempo de vida */
 	p->timeLifeDistri = newUDistri(0, 2 * atl);
@@ -66,12 +66,11 @@ int getAdultAge(Specimen *p) {
 }
 
 int getBreeds(Specimen *p) {
-	return p != NULL ?
-			(int) floor(0.5 + nextPoDistriRandom(p->breedsDistri)) : -1;
+	return p != NULL ? nextPoDistriRandom(p->breedsDistri) : -1;
 }
 
 int getKits(Specimen *p) {
-	return p != NULL ? (int) floor(0.5 + nextPoDistriRandom(p->kitsDistri)) : -1;
+	return p != NULL ? nextPoDistriRandom(p->kitsDistri) : -1;
 }
 
 int isBreedSeason(Specimen *p, int time) {
