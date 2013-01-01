@@ -29,6 +29,16 @@ int main(void) {
 	setArea(x1, y1, x2, y2, nx, ny, getFoxSpecimen(), getRabbitSpecimen());
 	printfArea("set");
 
+	int i, max = 4;
+	char str[32];
+
+	for (i = 1; i <= max; ++i) {
+		updateArea(i);
+		sprintf(str, "Iteração %d", i);
+		printfArea(str);
+
+	}
+
 	updateArea(1);
 
 	freeArea();

@@ -64,12 +64,13 @@ IList removeOldIndividuals(IList actual, int timeLimit) {
 	IList new = newIndividualList();
 	if (new == NULL )
 		return NULL ;
-
+	printf("after new ind list  %p and actual %p\n", new, actual);
 	ListIter iter = newListIter(actual);
 	if (iter == NULL ) {
 		freeList(new);
-		return NULL ;
+		return actual;
 	}
+	printf("after iter new ind list  %p and actual %p\n", new, actual);
 
 	/* copy youngs to a new list */
 	Individual *pr;

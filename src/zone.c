@@ -32,12 +32,13 @@ struct zone {
 
 };
 
-static void removeColony(Zone z) {
+static Colony removeColony(Zone z) {
 
 	if (getZoneCount(z) < 2) {
 		freeColony(z->c);
 		z->c = NULL;
 	}
+	return z->c;
 }
 
 Zone newZone(float x0, float y0, float x1, float y1, int line, int col) {
@@ -82,12 +83,8 @@ IList updateZone(Zone z, int time) {
 	if (z->c == NULL || z->noUpdate)
 		return NULL ;
 
-	updateColony(z->c, time);
-
-	removeColony(z);
-
 	/* return excess rabbits */
-	return trimColony(z->c, z->max);
+	return trimColony(removeColony(z), z->max);
 }
 
 Colony getZoneColony(Zone z) {

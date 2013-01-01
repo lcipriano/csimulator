@@ -243,7 +243,9 @@ static void initFoxColony(Colony c, int initCount, int time,
 static void updateFoxes(int time) {
 
 	/* update the foxs */
+	printf("b foxs colony %p\n", area.foxs);
 	updateColony(area.foxs, time);
+	printf("a foxs colony %p\n", area.foxs);
 }
 
 static void printfFox(Individual *a, const char *prefix) {
@@ -330,6 +332,7 @@ static void removeDeadFoxs() {
 			insertIndividual(new, pr);
 	freeListIter(iter);
 
+	printf("new %p", new);
 	/* free actual list */
 	setColonyIndividuals(area.foxs, new);
 
@@ -428,7 +431,7 @@ static void huntRabbits(int time) {
 
 	Individual *pf;
 	while ((pf = ListIterNext(foxs, NULL )) != NULL ) {
-		printfFox(pf,"");
+		printfFox(pf, "");
 		/* only adult foxs hunt */
 		if (time >= pf->adultTime)
 			huntRabbit(pf);
@@ -494,7 +497,7 @@ void printfArea(const char * msg) {
 
 	printf("\n%s\n", msg);
 
-	printf("Foxs %d ", getColonyCount(area.foxs));
+	printf("Foxs %d %p ", getColonyCount(area.foxs), area.foxs);
 
 	int zoneTotalCount = 0, count;
 
