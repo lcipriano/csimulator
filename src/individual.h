@@ -19,6 +19,10 @@ void printfIndividual(Individual *r);
 
 int getIndividualAge(Individual *a, int time);
 
+void setIndividualPos(Individual *i, float x, float y);
+
+void displaceIndividual(Individual *i, float dx, float dy);
+
 Message getIndividualMsg(Individual *a);
 
 #endif /* ANIMAL_H */

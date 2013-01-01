@@ -41,7 +41,7 @@ int getRabbitID(void) {
 	return id++;
 }
 
-Specimen *getRabbitPop() {
+Specimen *getRabbitSpecimen() {
 
 	initRabbits();
 

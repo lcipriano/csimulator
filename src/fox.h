@@ -12,6 +12,6 @@
 
 int getFoxID(void);
 
-Specimen *getFoxPop();
+Specimen *getFoxSpecimen();
 
 #endif /* FOX_H_ */

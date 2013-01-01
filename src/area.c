@@ -184,10 +184,10 @@ static void updateZones(int time) {
 				/* if found an empty zone creat a new colony */
 				if (destZone != NULL ) {
 
-					Colony nc = newColony(getRabbitPop());
+					Colony nc = newColony(getRabbitSpecimen());
 					setColonyIndividuals(nc, newRabbitList);
-					setColonyX(nc, getZoneCenterX(destZone));
-					setColonyY(nc, getZoneCenterY(destZone));
+					setColonyPos(nc, getZoneCenterX(destZone),
+							getZoneCenterY(destZone));
 					setZoneColony(destZone, nc);
 
 					/* trim the new Colony */
@@ -227,8 +227,7 @@ static void initFoxColony(Colony c, int initCount, int time,
 	initColony(c, initCount, time, idGenerator);
 
 	/* set the coords */
-	IList f = getColonyIndividuals(c);
-	ListIter fi = newListIter(f);
+	ListIter fi = getColonyIter(c);
 	if (fi == NULL )
 		return;
 
@@ -318,7 +317,7 @@ static void removeDeadFoxs() {
 	if (new == NULL )
 		return;
 
-	ListIter iter = newListIter(getColonyIndividuals(area.foxs));
+	ListIter iter = getColonyIter(area.foxs);
 	if (iter == NULL ) {
 		freeList(new);
 		return;
@@ -348,7 +347,7 @@ static void huntRabbit(Individual *fox) {
 
 	int minRabbits = 10, huntedRabbits = 0, state = 0, hunting = 1;
 	Zone huntingZone = NULL;
-	printfFox(fox, "start hunting");
+
 	while (hunting) {
 
 		switch (state) {
@@ -367,9 +366,6 @@ static void huntRabbit(Individual *fox) {
 				fox->x = getZoneRandomX(huntingZone);
 				fox->y = getZoneRandomY(huntingZone);
 
-				printfFox(fox, "moved to hunting zone");
-				printfZone(huntingZone);
-
 				if (huntedRabbits < minRabbits)
 					state = 1;
 				else
@@ -383,7 +379,6 @@ static void huntRabbit(Individual *fox) {
 			/* get the minimum rabbits */
 			if (huntZoneRabbit(huntingZone)) {
 				huntedRabbits++;
-				printfFox(fox, "hunted min rabbits");
 				if (huntedRabbits == minRabbits) {
 					state = 2;
 				}
@@ -397,19 +392,20 @@ static void huntRabbit(Individual *fox) {
 
 			/* get above minimum rabbits */
 			if (fox->energy > 0.95) {
-				if (fox->energy > 1.0)
-					fox->energy = 1.0;
-				hunting = 0;
-			} else {
 
 				if (huntZoneRabbit(huntingZone)) {
 					fox->energy += 0.1;
 					huntedRabbits++;
-					printfFox(fox, "hunting for energy");
 
 				} else {
 					state = 0;
 				}
+
+			} else {
+
+				if (fox->energy > 1.0)
+					fox->energy = 1.0;
+				hunting = 0;
 			}
 			break;
 		}
@@ -419,24 +415,24 @@ static void huntRabbit(Individual *fox) {
 		fox->energy -= 0.1 * (minRabbits - huntedRabbits);
 	}
 
-	printfFox(fox, "finish hunting");
 	printf("hunted rabbits = %d\n", huntedRabbits);
-	printfArea();
 
 	freeList(huntingZones);
 }
 
 static void huntRabbits(int time) {
 
-	ListIter foxs = newListIter(getColonyIndividuals(area.foxs));
+	ListIter foxs = getColonyIter(area.foxs);
 	if (foxs == NULL )
 		return;
 
 	Individual *pf;
-	while ((pf = ListIterNext(foxs, NULL )) != NULL )
+	while ((pf = ListIterNext(foxs, NULL )) != NULL ) {
+		printfFox(pf,"");
 		/* only adult foxs hunt */
 		if (time >= pf->adultTime)
 			huntRabbit(pf);
+	}
 	freeListIter(foxs);
 
 	removeDeadFoxs();
@@ -444,7 +440,7 @@ static void huntRabbits(int time) {
 
 static void setAreaFoxs() {
 
-	area.foxs = newColony(getFoxPop());
+	area.foxs = newColony(getFoxSpecimen());
 	initFoxColony(area.foxs, 4, 0, getFoxID);
 }
 
@@ -480,44 +476,23 @@ void freeArea() {
 void updateArea(int time) {
 
 	updateZones(time);
-	printfArea();
+	printfArea("After UPdate Rabbits");
 
 	updateFoxes(time);
-	printfArea();
+	printfArea("After UPdate Foxs");
 
 	/* foxes are hunting */
 
 	huntRabbits(time);
-	printfArea();
+	printfArea("After Foxs Hunt");
 
 }
 
-void printfArea() {
+void printfArea(const char * msg) {
 
 	int i, j;
 
-	/* draw area */
-
-	Colony c;
-
-	printf("\n-");
-	for (j = 0; j < area.nx; ++j) {
-		printf("----");
-	}
-	printf("\n");
-	for (i = 0; i < area.ny; ++i) {
-		printf("|");
-		for (j = 0; j < area.nx; ++j) {
-			c = getZoneColony(area.zones[i][j]);
-			printf("%3d|", c == NULL ? 0 : getColonyCount(c));
-		}
-		printf("\n-");
-
-		for (j = 0; j < area.nx; ++j) {
-			printf("----");
-		}
-		printf("\n");
-	}
+	printf("\n%s\n", msg);
 
 	printf("Foxs %d ", getColonyCount(area.foxs));
 
@@ -529,6 +504,50 @@ void printfArea() {
 				zoneTotalCount += count;
 
 	printf("Rabbits %d\n", zoneTotalCount);
+
+	int **foxs;
+
+	foxs = calloc(area.ny, sizeof(int *));
+	for (i = 0; i < area.ny; ++i)
+		foxs[i] = calloc(area.nx, sizeof(int));
+
+	ListIter f = getColonyIter(area.foxs);
+	Individual ind;
+	float xscale = (area.xmax - area.xmin) / area.nx;
+	float yscale = (area.ymax - area.ymin) / area.ny;
+	while (ListIterNext(f, &ind) != NULL ) {
+		i = (int) floor((area.ymax - ind.y) / yscale);
+		j = (int) floor(ind.x / xscale);
+		foxs[i][j] += 1;
+	}
+	freeListIter(f);
+
+	/* draw area */
+
+	Colony c;
+
+	printf("-");
+	for (j = 0; j < area.nx; ++j) {
+		printf("--------");
+	}
+	printf("\n");
+	for (i = 0; i < area.ny; ++i) {
+		printf("|");
+		for (j = 0; j < area.nx; ++j) {
+			c = getZoneColony(area.zones[i][j]);
+			printf("%-3d %3d|", foxs[i][j], c == NULL ? 0 : getColonyCount(c));
+		}
+		printf("\n-");
+
+		for (j = 0; j < area.nx; ++j) {
+			printf("--------");
+		}
+		printf("\n");
+	}
+
+	for (i = 0; i < area.ny; ++i)
+		free(foxs[i]);
+	free(foxs);
 
 }
 

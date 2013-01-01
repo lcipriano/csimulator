@@ -18,7 +18,7 @@ void freeArea();
 
 void updateArea(int time);
 
-void printfArea();
+void printfArea(const char *msg);
 
 Message getAreaMsg();
 

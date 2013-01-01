@@ -109,6 +109,10 @@ void initColony(Colony c, int count, int time, int (*idGenerator)(void)) {
 	} while (i < count);
 }
 
+ListIter getColonyIter(Colony c) {
+	return c == NULL ? NULL : newListIter(c->Individuals);
+}
+
 IList getColonyIndividuals(Colony c) {
 	return c == NULL ? NULL : c->Individuals;
 }
@@ -124,18 +128,20 @@ void setColonyIndividuals(Colony c, IList al) {
 
 }
 
-void setColonyX(Colony c, float x) {
+void setColonyPos(Colony c, float x, float y) {
 
 	if (c == NULL )
 		return;
-	c->x = x;
-}
 
-void setColonyY(Colony c, float y) {
-
-	if (c == NULL )
+	ListIter animals = getColonyIter(c);
+	if (animals == NULL )
 		return;
-	c->y = y;
+
+	Individual *pi;
+	while ((pi = ListIterNext(animals, NULL )) != NULL )
+		setIndividualPos(pi, x, y);
+	freeListIter(animals);
+
 }
 
 void freeColony(Colony c) {

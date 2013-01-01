@@ -12,6 +12,6 @@
 
 int getRabbitID(void);
 
-Specimen *getRabbitPop();
+Specimen *getRabbitSpecimen();
 
 #endif /* RABBIT_H_ */

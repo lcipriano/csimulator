@@ -10,6 +10,7 @@
 
 #include "ilist.h"
 #include "specimen.h"
+#include "list.h"
 
 typedef struct colony *Colony;
 
@@ -21,11 +22,11 @@ void initColony(Colony c, int count, int time, int (*idGenerator)(void));
 
 void setColonyIndividuals(Colony c, IList al);
 
+ListIter getColonyIter(Colony c);
+
 IList getColonyIndividuals(Colony c);
 
-void setColonyX(Colony c, float x);
-
-void setColonyY(Colony c, float y);
+void setColonyPos(Colony c, float x, float y);
 
 void updateColony(Colony c, int time);
 

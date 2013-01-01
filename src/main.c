@@ -26,8 +26,8 @@ int main(void) {
 	int nx = 4;
 	int ny = 4;
 
-	setArea(x1, y1, x2, y2, nx, ny, getFoxPop(), getRabbitPop());
-	printfArea();
+	setArea(x1, y1, x2, y2, nx, ny, getFoxSpecimen(), getRabbitSpecimen());
+	printfArea("set");
 
 	updateArea(1);
 

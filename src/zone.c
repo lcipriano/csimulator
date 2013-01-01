@@ -18,7 +18,7 @@ struct zone {
 
 	int max;
 
-	float x0, y0, x1, y1;
+	float xmin, ymin, xmax, ymax;
 
 	float xc, yc;
 
@@ -27,6 +27,8 @@ struct zone {
 	UDistri XDistri, YDistri;
 
 	int line, col;
+
+	int nfoxs;
 
 };
 
@@ -49,10 +51,10 @@ Zone newZone(float x0, float y0, float x1, float y1, int line, int col) {
 	nz->max = 20;
 	nz->xc = (x0 + x1) / 2;
 	nz->yc = (y0 + y1) / 2;
-	nz->x0 = x0;
-	nz->x1 = x1;
-	nz->y0 = y0;
-	nz->y1 = y1;
+	nz->xmin = x0;
+	nz->xmax = x1;
+	nz->ymin = y0;
+	nz->ymax = y1;
 	nz->noUpdate = 1;
 	nz->XDistri = newUDistri(x0, x1);
 	nz->YDistri = newUDistri(y0, y1);
@@ -128,7 +130,8 @@ void printfZone(Zone z) {
 		return;
 
 	printf("Zone(%2d,%2d) Rabbits = %d ,x0=%.1f y0=%.1f x1=%.1f y1=%.1f\n",
-			z->line, z->col, getColonyCount(z->c), z->x0, z->y0, z->x1, z->y1);
+			z->line, z->col, getColonyCount(z->c), z->xmin, z->ymin, z->xmax,
+			z->ymax);
 	/*
 	 printf("Zone Animals = %d x0=%.3f y0=%.3f x1=%.3f y1=%.3f\n",
 	 getColonyCount(z->c), z->x0, z->y0, z->x1, z->y1);
@@ -168,5 +171,12 @@ float getZoneRandomY(Zone z) {
 int getZoneCount(Zone z) {
 
 	return z == NULL ? -1 : getColonyCount(z->c);
+
+}
+
+int inZone(Zone z, float x, float y) {
+
+	return z == NULL ?
+			0 : (z->xmin < x && x < z->max && z->ymin < y && y < z->ymax);
 
 }

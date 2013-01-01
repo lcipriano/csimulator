@@ -41,7 +41,7 @@ int getFoxID(void) {
 	return id++;
 }
 
-Specimen *getFoxPop() {
+Specimen *getFoxSpecimen() {
 
 	initFoxs();
 

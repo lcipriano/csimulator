@@ -40,4 +40,6 @@ void printfZone(Zone z);
 
 void setZoneUpdate(Zone z);
 
+int inZone(Zone z, float x, float y);
+
 #endif /* ZONE_H_ */

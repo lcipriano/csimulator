@@ -38,3 +38,23 @@ Message getIndividualMsg(Individual *a) {
 	return nm;
 
 }
+
+void setIndividualPos(Individual *i, float x, float y) {
+
+	if (i == NULL )
+		return;
+
+	i->x = x;
+	i->y = y;
+
+}
+
+void displaceIndividual(Individual *i, float dx, float dy) {
+
+	if (i == NULL )
+		return;
+
+	i->x += dx;
+	i->y += dy;
+
+}
