@@ -16,10 +16,16 @@
 typedef void *Container;
 
 struct list {
+
+	/* for the list */
 	Container head;
 	Container tail;
 	int count;
 	int dsize;
+
+	/* for iteration */
+	Container next;
+	int pos;
 };
 
 static Container getNext(Container c) {
@@ -91,12 +97,6 @@ static Container addList(List l, void *data) {
 
 }
 
-struct listIter {
-	Container next;
-	int pos;
-	int dsize;
-};
-
 static Container *nextContainer(ListIter li) {
 
 	if (li->next == NULL )
@@ -120,45 +120,79 @@ static Container getContainerAt(List l, int index) {
 	return c;
 }
 
-ListIter newListIter(List l) {
+void resetList(List l) {
 
 	if (l == NULL )
-		return NULL ;
+		return;
 
-	if (l->head == NULL )
-		return NULL ;
+	l->next = l->head;
+	l->pos = 0;
 
-	ListIter li = malloc(sizeof(struct listIter));
-
-	if (li != NULL ) {
-		li->next = l->head;
-		li->pos = 1;
-		li->dsize = l->dsize;
-	}
-
-	return li;
 }
+
+/**
+ * For compatibility with previous versions
+ *
+ * @param l
+ * @return
+ */
+
+ListIter getListIter(List l) {
+
+	resetList(l);
+
+	return l;
+
+}
+
+/**
+ * Just for compatibility with previous versions
+ *
+ * @param l
+ * @return
+ */
+ListIter newListIter(List l) {
+
+	return getListIter(l);
+}
+
+/**
+ * Just for compatibility with previous versions
+ *
+ * @param li
+ */
 
 void freeListIter(ListIter li) {
-
-	if (li != NULL )
-		free(li);
+	return;
 }
 
-void *ListIterNext(ListIter li, void *data) {
+void *getListNext(List li, void *data) {
 
 	if (li == NULL )
 		return NULL ;
 
-	Container c = nextContainer(li);
-
-	if (c == NULL )
+	if (li->next == NULL )
 		return NULL ;
 
-	if (data != NULL )
-		return getData(c, data, li->dsize);
+	Container tmp = li->next;
+	li->next = getNext(li->next);
+	li->pos++;
 
-	return getDataPointer(c);
+	if (data != NULL )
+		return getData(tmp, data, li->dsize);
+
+	return getDataPointer(tmp);
+}
+
+/**
+ * Just for compatibility with previous versions
+ *
+ * @param li
+ * @param data
+ */
+void *ListIterNext(ListIter li, void *data) {
+
+	return getListNext(li, data);
 
 }
 
@@ -170,11 +204,11 @@ int getListIterNextPos(ListIter li) {
 	if (li->next == NULL )
 		return -1;
 
-	return li->pos;
+	return li->pos + 1;
 }
 
 int getListIterLastPos(ListIter li) {
-	return li == NULL ? -1 : li->pos - 1;
+	return li == NULL ? -1 : li->pos;
 }
 
 static void initList(List l) {

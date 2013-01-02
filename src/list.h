@@ -49,7 +49,13 @@ void clearList(List l);
  * List Iterator
  */
 
-typedef struct listIter *ListIter;
+typedef List ListIter;
+
+void resetList(List l);
+
+void *getListNext(List li, void *data);
+
+ListIter getListIter(List l);
 
 ListIter newListIter(List l);
 

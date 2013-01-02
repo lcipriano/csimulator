@@ -34,7 +34,7 @@ int main(void) {
 	int i, max = 120;
 	char str[32];
 	Date d = newDate(1, 1, 2009);
-	FILE *output = fopen("/home/lcipriano/workspace/scanPop/input.txt", "w");
+	FILE *output = fopen("/home/lcipriano/workspace64/scanPop/input.txt", "w");
 
 	for (i = 1; i <= max; ++i) {
 		updateArea(i);
