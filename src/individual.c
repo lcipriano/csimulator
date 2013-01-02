@@ -31,7 +31,7 @@ Message getIndividualMsg(Individual *a) {
 	if (a == NULL ) {
 		nm.str[0] = '\0';
 	} else {
-		sprintf(nm.str, "INDIVIDUO %d %d %f %f", a->specimen, a->id, a->x,
+		sprintf(nm.str, "INDIVIDUO %2d %3d %.1f %.1f", a->specimen, a->id, a->x,
 				a->y);
 	}
 

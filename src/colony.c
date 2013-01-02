@@ -84,8 +84,8 @@ Colony newColony(Specimen *pt, int (*idGenerator)(void)) {
 	}
 
 	nc->pop = pt;
-	nc->ID = nextID++;
 	nc->getIndividualID = idGenerator;
+	nc->ID = nextID++;
 
 	return nc;
 }
@@ -131,6 +131,9 @@ void setColonyPos(Colony c, float x, float y) {
 
 	if (c == NULL )
 		return;
+
+	c->x = x;
+	c->y = y;
 
 	ListIter animals = getColonyIter(c);
 	if (animals == NULL )
@@ -205,7 +208,7 @@ Message getColonyMsg(Colony c) {
 		nm.str[0] = '\0';
 	} else {
 		nm.str[0] = '\0';
-		sprintf(nm.str, "COLONIA %d %d %d %f %f", c->pop->type, c->ID,
+		sprintf(nm.str, "COLONIA %2d %2d %3d %.1f %.1f", c->pop->type, c->ID,
 				getColonyCount(c), c->x, c->y);
 	}
 

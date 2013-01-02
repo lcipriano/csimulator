@@ -28,6 +28,10 @@ void sendAreaMsgTo(FILE *f);
 
 void sendFoxsMsg();
 
+void sendFoxsMsgTo();
+
 void sendZonesMsg();
+
+void sendZonesMsgTo(FILE *f);
 
 #endif /* AREA_H_ */

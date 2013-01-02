@@ -40,7 +40,7 @@ Specimen *newPopulation(Specimen *p, int type, int sbt, int ebt, int at,
 	p->avgKitsByCouple = akc;
 
 	/** gerador aleatório de ninhadas por mês */
-	p->breedsDistri = newPoDistri(((float) (ebt - sbt + 1)) / abs);
+	p->breedsDistri = newPoDistri(((float)abs)/ (ebt - sbt + 1));
 
 	/** gerador aleatório de tempo de vida */
 	p->timeLifeDistri = newUDistri(0, 2 * atl);

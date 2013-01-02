@@ -250,9 +250,11 @@ static void updateFoxes(int time) {
 
 	Individual *pa;
 	while ((pa = ListIterNext(fi, NULL )) != NULL ) {
-		pa->x = getAreaRandomX();
-		pa->y = getAreaRandomY();
-		pa->energy = 0.95;
+		if (pa->birthTime == time) {
+			pa->x = getAreaRandomX();
+			pa->y = getAreaRandomY();
+			pa->energy = 0.95;
+		}
 	}
 	freeListIter(fi);
 }
@@ -449,7 +451,7 @@ static void huntRabbits(int time) {
 static void setAreaFoxs() {
 
 	area.foxs = newColony(getFoxSpecimen(), getFoxID);
-	initFoxColony(area.foxs, 4, 0);
+	initFoxColony(area.foxs, 2, 0);
 }
 
 void setArea(float x1, float y1, float x2, float y2, int nx, int ny,
@@ -465,13 +467,11 @@ void setArea(float x1, float y1, float x2, float y2, int nx, int ny,
 	area.XDistri = newUDistri(x1, x2);
 	area.YDistri = newUDistri(y1, y2);
 
-	setAreaFoxs();
-
 	setAreaZones();
-
 	Colony c = newColony(r, getRabbitID);
-	initColony(c, 128, 0);
+	initColony(c, 64, 0);
 	setZoneColony(area.zones[nx / 2][ny / 2], c);
+	setAreaFoxs();
 
 }
 
@@ -561,7 +561,7 @@ Message getAreaMsg() {
 
 	Message nm;
 
-	sprintf(nm.str, "AREA %f %f %f %f", area.xmin, area.xmax, area.ymin,
+	sprintf(nm.str, "AREA %.1f %.1f %.1f %.1f", area.xmin, area.xmax, area.ymin,
 			area.ymax);
 
 	return nm;
@@ -611,6 +611,21 @@ void sendZonesMsg() {
 
 			if (getZoneColony(area.zones[y][x]) != NULL )
 				sendColonyMsg(getZoneColony(area.zones[y][x]));
+
+		}
+
+	}
+}
+
+void sendZonesMsgTo(FILE *f) {
+
+	int x, y;
+
+	for (y = 0; y < area.ny; ++y) {
+		for (x = 0; x < area.nx; ++x) {
+
+			if (getZoneColony(area.zones[y][x]) != NULL )
+				sendColonyMsgTo(f, getZoneColony(area.zones[y][x]));
 
 		}
 
